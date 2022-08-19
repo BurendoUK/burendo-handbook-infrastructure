@@ -34,7 +34,12 @@ module "log_bucket" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = module.s3_one.s3_bucket_id
+resource "aws_s3_bucket_policy" "public_bucket_policy" {
+  bucket = module.s3_public.s3_bucket_id
+  policy = data.aws_iam_policy_document.s3_policy.json
+}
+
+resource "aws_s3_bucket_policy" "private_bucket_policy" {
+  bucket = module.s3_private.s3_bucket_id
   policy = data.aws_iam_policy_document.s3_policy.json
 }

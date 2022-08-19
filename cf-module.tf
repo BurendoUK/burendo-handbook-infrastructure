@@ -73,7 +73,7 @@ module "cloudfront" {
     group_one = {
       failover_status_codes      = [403, 404, 500, 502]
       primary_member_origin_id   = "appsync"
-      secondary_member_origin_id = "s3_one"
+      secondary_member_origin_id = "s3_public"
     }
   }
 
@@ -105,7 +105,7 @@ module "cloudfront" {
   ordered_cache_behavior = [
     {
       path_pattern           = "/static/*"
-      target_origin_id       = "s3_one"
+      target_origin_id       = "s3_public"
       viewer_protocol_policy = "redirect-to-https"
 
       allowed_methods = ["GET", "HEAD", "OPTIONS"]
