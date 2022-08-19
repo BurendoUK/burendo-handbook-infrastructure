@@ -9,4 +9,10 @@ locals {
     Company     = "Burendo"
     Practice    = "Engineering"
   }
+
+  domain_name = "terraform-aws-modules.modules.tf" # trimsuffix(data.aws_route53_zone.this.name, ".")
+  subdomain   = "handbook"
+  package_url = "https://raw.githubusercontent.com/terraform-aws-modules/terraform-aws-lambda/master/examples/fixtures/python3.8-zip/existing_package.zip"
+  downloaded  = "downloaded_package_${md5(local.package_url)}.zip"
+
 }
