@@ -20,7 +20,7 @@
 **/variables.tf
 
 # Dependencies
-/node_modules
+/docusaurus/node_modules
 
 # Production
 /build
