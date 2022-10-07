@@ -1,6 +1,6 @@
 module "s3_public" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "3.4.0"
 
   bucket        = "burendo-handbook-public-${local.environment}"
   force_destroy = true
@@ -8,7 +8,7 @@ module "s3_public" {
 
 module "s3_private" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "3.4.0"
 
   bucket        = "burendo-handbook-private-${local.environment}"
   force_destroy = true
@@ -16,7 +16,7 @@ module "s3_private" {
 
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "3.4.0"
 
   bucket = "burendo-handbook-logs-${local.environment}"
   acl    = null
