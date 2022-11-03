@@ -1,18 +1,16 @@
-# burendo-repo-template-terraform
-This repo contains Makefile to fit the standard pattern. This repo is a base to create new Terraform repos, adding the githooks submodule, making the repo ready for use.  After cloning this repo, please run: make bootstrap
+# Burendo Handbook Infrastructure
 
-## Usage
+This repo contains the AWS infrastructure for the Burendo Handbook & the pipeline to pull in the content from the content repos, build docusaurus and deploy.
 
-### First run
-`pip3 install -r requirements.txt`
+## Content
+To update the content used to create the handbook, modify in the respective content repo.
+[burendo-handbook-public](https://github.com/BurendoUK/burendo-handbook-public)
+[burendo-handbook-private](https://github.com/BurendoUK/burendo-handbook-private)
 
-### Bootstrap
+## Architecture
+![Handbook architecture](handbook-architecture.png)
 
-Replace any mentions of `example` with the name of your new repository, e.g. `burendo-my-service`
+## Running locally
 
-Create your AWS session with the cli, and assume the `Administrator` role. For this I personally use [awsume](https://awsu.me/).
-
-then:
-
-`make bootstrap`
-`terraform init`
+Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs.
+Then enter `burendo-handbook` folder and run `npm run`.
