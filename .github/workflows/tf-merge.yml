@@ -8,6 +8,10 @@ on:
       - ".github/workflows/**"
   workflow_dispatch: {}
 
+env:
+  ENV_NAME: prod
+  BUCKET_SUFFIX: handbook.burendo.com
+
 jobs:
   production:
     name: "Terraform Apply Production"
@@ -41,7 +45,7 @@ jobs:
         run: |
           python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
           sed -i "s/Administrator/ci/" variables.tf
-        working-directory: .
+        working-directory: terraform
         env:
           TF_WORKSPACE: default
           AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
@@ -50,6 +54,7 @@ jobs:
       - name: "Terraform Init"
         id: init
         run: terraform init >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         env:
           TF_WORKSPACE: default
           AWS_DEFAULT_REGION: eu-west-2
@@ -59,6 +64,7 @@ jobs:
         run: |
           terraform plan -no-color -out terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
           terraform apply -no-color -auto-approve terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         continue-on-error: false
         env:
           TF_WORKSPACE: default
@@ -68,39 +74,40 @@ jobs:
       - name: "Terraform Plan"
         id: plan
         run: terraform plan -no-color -detailed-exitcode >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         continue-on-error: false
         env:
           TF_WORKSPACE: default
           TF_INPUT: false
           AWS_DEFAULT_REGION: eu-west-2
-      
+
       - name: "Pull PUBLIC handbook content"
         id: public-content
-        run: git checkout https://github.com/BurendoUK/burendo-handbook-public.git
-        working-directory: ../burendo-handbook-public
+        run: |
+          git clone https://github.com/BurendoUK/burendo-handbook-public.git
+        working-directory: .
         continue-on-error: false
       
-      - name: "Copy PUBLIC handbook content"
+      - name: "Move PUBLIC handbook content"
         id: public-content-copy
-        run: mv -R docs/* ../burendo-handbook-infrastructure/burendo-handbook/docs
-        working-directory: ../burendo-handbook-public
+        run: |
+          mkdir -p burendo-handbook/docs
+          mv burendo-handbook-public/docs/* burendo-handbook/docs
+        working-directory: .
         continue-on-error: false
 
       - name: "Build handbook with content"
         id: build-handbook
-        run: npm run build
+        run: |
+          npm install
+          npm run build
         working-directory: ./burendo-handbook
         continue-on-error: false
 
       - name: "Copy build output to S3"
         id: copy-to-s3
-        run: |
-          cd terraform
-          output=$(terraform output -json)
-          s3_bucket=$(echo $output | jq -r .burendo_handbook_s3.value)
-          cd ../burendo-handbook
-          aws s3 cp build s3://$s3_bucket --recursive
-        working-directory: .
+        run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
+        working-directory: burendo-handbook
         continue-on-error: false
 
       - name: "Terminate Session"
