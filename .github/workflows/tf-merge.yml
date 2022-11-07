@@ -9,7 +9,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  ENV_NAME: prod
+  ENV_NAME: dev
   BUCKET_SUFFIX: handbook.burendo.com
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
           role-skip-session-tagging: true
           aws-access-key-id: ${{ secrets.ACTIONS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ACTIONS_SECRET_ACCESS_KEY }}
-          role-to-assume: ${{ secrets.AWS_GHA_ROLE }}
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE_DEV }}
           role-duration-seconds: 900
           role-session-name: ${{ github.run_id }}-${{ github.run_number }}
           aws-region: eu-west-2
@@ -44,7 +44,7 @@ jobs:
         id: bootstrap
         run: |
           python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-          sed -i "s/Administrator/ci/" variables.tf
+          sed -i "s/Administrator/ci/" terraform/variables.tf
         working-directory: terraform
         env:
           TF_WORKSPACE: default
@@ -106,7 +106,7 @@ jobs:
 
       - name: "Copy build output to S3"
         id: copy-to-s3
-        run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
+        run: aws s3 sync build s3://${ENV}.${BUCKET_SUFFIX} --delete
         working-directory: burendo-handbook
         continue-on-error: false
 
@@ -129,5 +129,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: steps.redact-logs-prod.conclusion == 'success'
         with:
-          name: prod-workflow-log
+          name: dev-workflow-log
           path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
