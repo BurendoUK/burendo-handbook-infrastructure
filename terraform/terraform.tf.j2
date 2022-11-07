@@ -3,11 +3,12 @@ terraform {
 
   backend "s3" {
     bucket         = "{{terraform.state_file_bucket}}"
-    key            = "terraform/burendo/example.tfstate"
+    key            = "terraform/burendo/burendo-handbook-infrastructure.tfstate"
     region         = "{{terraform.state_file_region}}"
     encrypt        = false
     dynamodb_table = "terraform-state-lock"
-    kms_key_id     = "{{terraform.state_kms_key_id}}"
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.aws_production_acc}}:key/{{terraform.state_kms_key_id}}"
+    role_arn       = "arn:aws:iam::{{terraform.aws_production_acc}}:role/{{terraform.state_role}}"
   }
 
   required_providers {
@@ -19,8 +20,5 @@ terraform {
 
 provider "aws" {
   region = "{{terraform.state_file_region}}"
-  
-  assume_role {
-    role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
-  }
+
 }

@@ -20,6 +20,8 @@ def main():
     try:
         terraform_secret = secrets_manager.get_secret_value(
             SecretId="burendo-terraform-secrets")
+        github_secret = secrets_manager.get_secret_value(
+            SecretId="burendo-github-secrets")
 
     except botocore.exceptions.ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -31,22 +33,32 @@ def main():
             print("ERROR: Problem calling AWS SSM: {}".format(error_message))
         sys.exit(1)
 
-    config_data = yaml.load(terraform_secret['SecretBinary'], Loader=yaml.FullLoader)
-    config_data['terraform'] = json.loads(terraform_secret['SecretBinary'])["terraform"]
+    config_data = yaml.load(
+        terraform_secret['SecretBinary'], Loader=yaml.FullLoader)
+    config_data['terraform'] = json.loads(
+        terraform_secret['SecretBinary'])["terraform"]
+    config_data['accounts'] = json.loads(
+        terraform_secret['SecretBinary'])["accounts"]
+    config_data['github'] = json.loads(github_secret['SecretBinary'])["github"]
 
-    with open("terraform.tf.j2") as in_template:
+    with open("terraform/terraform.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
-    with open("terraform.tf", "w+") as terraform_tf:
+    with open("terraform/terraform.tf", "w+") as terraform_tf:
         terraform_tf.write(template.render(config_data))
-    with open("variables.tf.j2") as in_template:
+    with open("terraform/terraform.tfvars.j2") as in_template:
         template = jinja2.Template(in_template.read())
-    with open("variables.tf", "w+") as terraform_tf:
+    with open("terraform/terraform.tfvars", "w+") as terraform_tf:
         terraform_tf.write(template.render(config_data))
-    with open("locals.tf.j2") as in_template:
+    with open("terraform/variables.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
-    with open("locals.tf", "w+") as terraform_tf:
+    with open("terraform/variables.tf", "w+") as terraform_tf:
+        terraform_tf.write(template.render(config_data))
+    with open("terraform/locals.tf.j2") as in_template:
+        template = jinja2.Template(in_template.read())
+    with open("terraform/locals.tf", "w+") as terraform_tf:
         terraform_tf.write(template.render(config_data))
     print("Terraform config successfully created")
+
 
 if __name__ == "__main__":
     main()

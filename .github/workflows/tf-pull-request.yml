@@ -6,6 +6,10 @@ on:
       - ".github/workflows/**"
   workflow_dispatch: {}
 
+env:
+  ENV_NAME: dev
+  BUCKET_SUFFIX: handbook.burendo.com
+
 jobs:
   pull-request:
     name: "Terraform Pull Request"
@@ -31,7 +35,7 @@ jobs:
           role-skip-session-tagging: true
           aws-access-key-id: ${{ secrets.ACTIONS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ACTIONS_SECRET_ACCESS_KEY }}
-          role-to-assume: ${{ secrets.AWS_GHA_ROLE }}
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE_DEV }}
           role-duration-seconds: 900
           role-session-name: ${{ github.run_id }}-${{ github.run_number }}
           aws-region: eu-west-2
@@ -40,27 +44,71 @@ jobs:
         id: bootstrap
         run: |
           python bootstrap.py
+          sed -i "s/Administrator/ci/" terraform/variables.tf
         working-directory: .
         env:
           TF_WORKSPACE: default
-          AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
+          AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE_DEV }}
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Terraform Init"
         id: init
-        run: terraform init 
+        run: terraform init
+        working-directory: terraform
         env:
           TF_WORKSPACE: default
+          AWS_DEFAULT_REGION: eu-west-2
+
+      - name: "Terraform Apply"
+        id: apply
+        run: |
+          terraform plan -no-color -out terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+          terraform apply -no-color -auto-approve terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
+        continue-on-error: false
+        env:
+          TF_WORKSPACE: default
+          TF_INPUT: false
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Terraform Plan"
         id: plan
         run: terraform plan -no-color >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         continue-on-error: false
         env:
           TF_WORKSPACE: default
           AWS_DEFAULT_REGION: eu-west-2
+
+      - name: "Pull PUBLIC handbook content"
+        id: public-content
+        run: |
+          git clone https://github.com/BurendoUK/burendo-handbook-public.git
+        working-directory: .
+        continue-on-error: false
       
+      - name: "Move PUBLIC handbook content"
+        id: public-content-copy
+        run: |
+          mkdir -p burendo-handbook/docs
+          mv burendo-handbook-public/docs/* burendo-handbook/docs
+        working-directory: .
+        continue-on-error: false
+
+      - name: "Build handbook with content"
+        id: build-handbook
+        run: |
+          npm install
+          npm run build
+        working-directory: ./burendo-handbook
+        continue-on-error: false
+
+      - name: "Copy build output to S3"
+        id: copy-to-s3
+        run: aws s3 sync build s3://${ENV_NAME}.${BUCKET_SUFFIX} --delete
+        working-directory: burendo-handbook
+        continue-on-error: false
+
       - name: "Terminate Session"
         if: ${{ always() }}
         id: terminate-session
@@ -68,17 +116,19 @@ jobs:
           set -e
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
 
-      - name: "Redact Logs PROD PR"
-        if: steps.plan.conclusion == 'failure'
+      - name: "Redact Logs DEV PR"
+        if: ${{ always() }}
         id: redact-logs-prod-pr
         run: |
-              sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+              sed -i "s/$ACC_DEV/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
         shell: bash
         env:
-          ACC_PROD: ${{ secrets.AWS_GHA_ACC_PROD }}
+          ACC_DEV: ${{ secrets.AWS_GHA_ACC_DEV }}
 
-      - uses: actions/upload-artifact@v2
-        if: steps.redact-logs-prod-pr.conclusion == 'success'
+      - name: "Upload Plan log"
+        uses: actions/upload-artifact@v2
+        id: upload-plan-log
+        if: ${{ failure() }}
         with:
-          name: prod-workflow-log
+          name: pr-workflow-log
           path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log

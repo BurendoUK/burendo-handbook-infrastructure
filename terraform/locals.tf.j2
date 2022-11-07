@@ -1,0 +1,33 @@
+locals {
+  environment = terraform.workspace == "default" ? "burendo-dev" : terraform.workspace
+  environment_short_domain = {
+    "burendo-dev" = "dev",
+    "burendo-prod" = ""
+  }
+
+  account = { {% for key, value in accounts.items() %}
+     {{key}} = "{{value.number}}"{% endfor %}
+    }
+
+  tags = {
+    Environment = local.environment
+    Company     = "Burendo"
+    Practice    = "Engineering"
+  }
+
+  common_labels = [
+    {
+      name   = "invalid"
+      colour = "000000"
+    }
+  ]
+  common_topics = [
+    "burendo",
+  ]
+  aws_topics = [
+    "aws",
+    "terraform",
+    "infrastructure",
+    "infrastructure-as-code",
+  ]
+}

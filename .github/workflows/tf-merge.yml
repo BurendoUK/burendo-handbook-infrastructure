@@ -8,6 +8,10 @@ on:
       - ".github/workflows/**"
   workflow_dispatch: {}
 
+env:
+  ENV_NAME: dev
+  BUCKET_SUFFIX: handbook.burendo.com
+
 jobs:
   production:
     name: "Terraform Apply Production"
@@ -31,7 +35,7 @@ jobs:
           role-skip-session-tagging: true
           aws-access-key-id: ${{ secrets.ACTIONS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ACTIONS_SECRET_ACCESS_KEY }}
-          role-to-assume: ${{ secrets.AWS_GHA_ROLE }}
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE_DEV }}
           role-duration-seconds: 900
           role-session-name: ${{ github.run_id }}-${{ github.run_number }}
           aws-region: eu-west-2
@@ -40,7 +44,8 @@ jobs:
         id: bootstrap
         run: |
           python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-        working-directory: .
+          sed -i "s/Administrator/ci/" terraform/variables.tf
+        working-directory: terraform
         env:
           TF_WORKSPACE: default
           AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
@@ -49,6 +54,7 @@ jobs:
       - name: "Terraform Init"
         id: init
         run: terraform init >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         env:
           TF_WORKSPACE: default
           AWS_DEFAULT_REGION: eu-west-2
@@ -58,6 +64,7 @@ jobs:
         run: |
           terraform plan -no-color -out terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
           terraform apply -no-color -auto-approve terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         continue-on-error: false
         env:
           TF_WORKSPACE: default
@@ -67,12 +74,42 @@ jobs:
       - name: "Terraform Plan"
         id: plan
         run: terraform plan -no-color -detailed-exitcode >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
         continue-on-error: false
         env:
           TF_WORKSPACE: default
           TF_INPUT: false
           AWS_DEFAULT_REGION: eu-west-2
+
+      - name: "Pull PUBLIC handbook content"
+        id: public-content
+        run: |
+          git clone https://github.com/BurendoUK/burendo-handbook-public.git
+        working-directory: .
+        continue-on-error: false
       
+      - name: "Move PUBLIC handbook content"
+        id: public-content-copy
+        run: |
+          mkdir -p burendo-handbook/docs
+          mv burendo-handbook-public/docs/* burendo-handbook/docs
+        working-directory: .
+        continue-on-error: false
+
+      - name: "Build handbook with content"
+        id: build-handbook
+        run: |
+          npm install
+          npm run build
+        working-directory: ./burendo-handbook
+        continue-on-error: false
+
+      - name: "Copy build output to S3"
+        id: copy-to-s3
+        run: aws s3 sync build s3://${ENV}.${BUCKET_SUFFIX} --delete
+        working-directory: burendo-handbook
+        continue-on-error: false
+
       - name: "Terminate Session"
         if: ${{ always() }}
         id: terminate-session
@@ -92,5 +129,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: steps.redact-logs-prod.conclusion == 'success'
         with:
-          name: prod-workflow-log
+          name: dev-workflow-log
           path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
