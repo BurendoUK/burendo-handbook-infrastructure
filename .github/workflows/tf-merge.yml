@@ -106,7 +106,7 @@ jobs:
 
       - name: "Copy build output to S3"
         id: copy-to-s3
-        run: aws s3 sync build s3://${ENV}.${BUCKET_SUFFIX} --delete
+        run: aws s3 sync build s3://${ENV_NAME}.${BUCKET_SUFFIX} --delete
         working-directory: burendo-handbook
         continue-on-error: false
 
