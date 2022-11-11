@@ -69,6 +69,12 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     minimum_protocol_version = "TLSv1.2_2019"
     ssl_support_method       = "sni-only"
   }
+
+  custom_error_response {
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
 }
 
 resource "aws_cloudfront_origin_access_control" "handbook_distribution_acl" {
