@@ -59,18 +59,6 @@ jobs:
           TF_WORKSPACE: default
           AWS_DEFAULT_REGION: eu-west-2
 
-      - name: "Terraform Apply"
-        id: apply
-        run: |
-          terraform plan -no-color -out terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-          terraform apply -no-color -auto-approve terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-        working-directory: terraform
-        continue-on-error: false
-        env:
-          TF_WORKSPACE: default
-          TF_INPUT: false
-          AWS_DEFAULT_REGION: eu-west-2
-
       - name: "Terraform Plan"
         id: plan
         run: terraform plan -no-color >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
@@ -101,12 +89,6 @@ jobs:
           npm install
           npm run build
         working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Copy build output to S3"
-        id: copy-to-s3
-        run: aws s3 sync build s3://${ENV_NAME}.${BUCKET_SUFFIX} --delete
-        working-directory: burendo-handbook
         continue-on-error: false
 
       - name: "Terminate Session"

@@ -22,3 +22,9 @@ provider "aws" {
   region = "{{terraform.state_file_region}}"
 
 }
+
+provider "aws" {
+  # Required to be in N Virgina as Cloudfront doesn't use a certificate from a different region for SSL
+  alias   = "northvirginia"
+  region = "us-east-1"
+}

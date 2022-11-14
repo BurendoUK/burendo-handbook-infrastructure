@@ -5,6 +5,16 @@ locals {
     "burendo-prod" = ""
   }
 
+  environment_domain = {
+    "burendo-dev" = "${local.environment_short_domain[local.environment]}.handbook.burendo.com",
+    "burendo-prod"= "handbook.burendo.com"
+  }
+
+  deploy_fqdn = {
+    "burendo-dev" = true,
+    "burendo-prod" = true
+  }
+
   account = { {% for key, value in accounts.items() %}
      {{key}} = "{{value.number}}"{% endfor %}
     }
@@ -30,4 +40,6 @@ locals {
     "infrastructure",
     "infrastructure-as-code",
   ]
+
+  s3_origin_id = "${local.environment}"
 }

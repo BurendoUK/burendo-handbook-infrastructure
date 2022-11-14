@@ -1,34 +1,31 @@
 resource "aws_s3_bucket" "burendo_handbook" {
   bucket = "${local.environment_short_domain[local.environment]}.handbook.burendo.com"
-  acl    = "public-read"
-  policy = jsonencode({
-    Version : "2012-10-17",
-    Statement : [
-      {
-        Sid : "PublicReadGetObject",
-        Effect : "Allow",
-        Principal : "*",
-        Action : "s3:GetObject",
-        Resource : "arn:aws:s3:::${local.environment_short_domain[local.environment]}.handbook.burendo.com/*"
-      }
-    ]
-  })
 
   tags = merge(local.tags, {
     Name = "burendo-handbook"
   })
 }
 
-resource "aws_s3_bucket_website_configuration" "burendo_handbook" {
+data "aws_iam_policy_document" "s3_policy" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.burendo_handbook.arn}/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = ["${aws_cloudfront_distribution.handbook_distribution.arn}"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "burendo_handbook" {
   bucket = aws_s3_bucket.burendo_handbook.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "404.html"
-  }
+  policy = data.aws_iam_policy_document.s3_policy.json
 }
 
 output "burendo_handbook_s3" {
