@@ -100,7 +100,6 @@ jobs:
         id: build-handbook
         run: |
           npm install
-          npm run swizzle @docusaurus/theme-classic SearchBar
           npm run build
         working-directory: ./burendo-handbook
         continue-on-error: false
