@@ -24,3 +24,7 @@
 **/burendo-handbook-private/*
 burendo-handbook-private/*
 burendo-handbook-public/*
+
+# node
+
+**/node_modules
