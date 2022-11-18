@@ -6,13 +6,21 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Burendo Handbook",
+  title: "Burendo Engineering Handbook",
   tagline: "Together, it's possible",
   url: "https://handbook.burendo.com",
   baseUrl: "/",
   onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon: "img/burendo_outline.png",
+  plugins: [
+    [
+      require.resolve("@cmfcmf/docusaurus-search-local"),
+      {
+        indexBlog: false,
+      },
+    ],
+  ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -51,19 +59,20 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/burendo_outline.png',
+      colorMode: {
+        defaultMode: 'dark',
+        disableSwitch: false,
+        respectPrefersColorScheme: false,
+        },
       navbar: {
-        title: "Burendo Handbook",
+        hideOnScroll: true,
+        title: "Burendo Engineering Handbook",
         logo: {
           alt: "Burendo Logo",
           src: "img/burendo_outline.png",
         },
         items: [
-          {
-            type: "doc",
-            docId: "intro",
-            position: "left",
-            label: "Handbook",
-          },
           {
             href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
             label: "GitHub",
