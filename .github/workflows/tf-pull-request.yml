@@ -100,7 +100,7 @@ jobs:
 
       - name: "Redact Logs DEV PR"
         if: ${{ always() }}
-        id: redact-logs-prod-pr
+        id: redact-logs-pr
         run: |
               sed -i "s/$ACC_DEV/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
         shell: bash
