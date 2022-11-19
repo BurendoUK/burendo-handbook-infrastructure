@@ -1,4 +1,7 @@
 resource "aws_cloudfront_distribution" "handbook_distribution" {
+  depends_on = [
+    aws_acm_certificate.burendo_handbook
+  ]
   origin {
     domain_name              = aws_s3_bucket.burendo_handbook.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.handbook_distribution_acl.id
