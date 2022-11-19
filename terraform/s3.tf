@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "burendo_handbook" {
-  bucket = local.environment_domain
+  bucket = local.environment_domain[local.environment]
 
   tags = merge(local.tags, {
     Name = "burendo-handbook"
