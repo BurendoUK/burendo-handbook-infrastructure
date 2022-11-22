@@ -7,10 +7,12 @@ resource "aws_route53_record" "burendo_handbook_ns" {
   name    = local.environment_domain[local.environment]
   type    = "NS"
   ttl     = "30"
-  records = ["ns-318.awsdns-39.com",
-    "ns-1870.awsdns-41.co.uk",
-    "ns-1387.awsdns-45.org",
-  "ns-718.awsdns-25.net"]
+  records = [
+    aws_route53_zone.burendo_handbook.name_servers[0],
+    aws_route53_zone.burendo_handbook.name_servers[1],
+    aws_route53_zone.burendo_handbook.name_servers[2],
+    aws_route53_zone.burendo_handbook.name_servers[3],
+  ]
   allow_overwrite = true
 }
 
