@@ -172,20 +172,3 @@ jobs:
         run: |
           set -e
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
-
-      - name: "Redact Handbook Logs PROD"
-        if: ${{ always() }}
-        id: redact-handbook-logs-prod
-        run: |
-              sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-        shell: bash
-        env:
-          ACC_PROD: ${{ secrets.AWS_GHA_ACC_PROD }}
-
-      - name: "Upload Handbook Plan log"
-        uses: actions/upload-artifact@v2
-        id: upload-handbook-plan-log
-        if: ${{ failure() }}
-        with:
-          name: prod-handbook-workflow-log
-          path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
