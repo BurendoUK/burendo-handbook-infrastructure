@@ -80,35 +80,6 @@ jobs:
           TF_INPUT: false
           AWS_DEFAULT_REGION: eu-west-2
 
-      - name: "Pull PUBLIC handbook content"
-        id: public-content
-        run: |
-          git clone https://github.com/BurendoUK/burendo-handbook-public.git
-        working-directory: .
-        continue-on-error: false
-      
-      - name: "Move PUBLIC handbook content"
-        id: public-content-copy
-        run: |
-          mkdir -p burendo-handbook/docs
-          mv burendo-handbook-public/docs/* burendo-handbook/docs
-        working-directory: .
-        continue-on-error: false
-
-      - name: "Build handbook with content"
-        id: build-handbook
-        run: |
-          npm install
-          npm run build
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Copy build output to S3"
-        id: copy-to-s3
-        run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
-        working-directory: burendo-handbook
-        continue-on-error: false
-
       - name: "Terminate Session"
         if: ${{ always() }}
         id: terminate-session
