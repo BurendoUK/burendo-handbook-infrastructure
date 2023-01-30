@@ -72,6 +72,10 @@ const config = {
       navbar: {
         hideOnScroll: true,
         title: "The Burendo Handbook",
+        logo: {
+          alt: "Burendo Logo",
+          src: "img/burendo_outline.png",
+        },
         items: [
           {
             href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
