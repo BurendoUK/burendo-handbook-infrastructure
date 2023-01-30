@@ -63,6 +63,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/burendo_outline.png',
       colorMode: {
         defaultMode: 'dark',
         disableSwitch: false,
@@ -71,10 +72,6 @@ const config = {
       navbar: {
         hideOnScroll: true,
         title: "The Burendo Handbook",
-        logo: {
-          alt: "Burendo Logo",
-          src: "img/burendo_outline.png",
-        },
         items: [
           {
             href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
