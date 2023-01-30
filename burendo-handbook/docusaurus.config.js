@@ -6,7 +6,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Burendo Engineering Handbook",
+  title: "The Burendo Handbook",
   tagline: "Together, it's possible",
   url: "https://handbook.burendo.com",
   baseUrl: "/",
@@ -63,7 +63,6 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/burendo_outline.png',
       colorMode: {
         defaultMode: 'dark',
         disableSwitch: false,
@@ -71,7 +70,7 @@ const config = {
         },
       navbar: {
         hideOnScroll: true,
-        title: "Burendo Engineering Handbook",
+        title: "The Burendo Handbook",
         logo: {
           alt: "Burendo Logo",
           src: "img/burendo_outline.png",
