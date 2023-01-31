@@ -1,4 +1,4 @@
-name: "Merge to Main"
+name: "Terraform Merge to Main"
 on:
   push:
     branches:
@@ -7,8 +7,6 @@ on:
       - "**/*.tf"
       - ".github/workflows/**"
   workflow_dispatch: {}
-  repository_dispatch:
-    types: [content-updated]
 
 env:
   BUCKET_SUFFIX: handbook.burendo.com
