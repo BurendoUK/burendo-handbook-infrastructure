@@ -8,7 +8,11 @@ resource "aws_apprunner_service" "stackedit" {
     }
     image_repository {
       image_configuration {
-        port = "8080" #The port that your application listens to in the container                             
+        port = "8080" #The port that your application listens to in the container   
+        runtime_environment_secrets = {
+          GITHUB_CLIENT_ID     = var.github_client_id
+          GITHUB_CLIENT_SECRET = var.github_client_secret
+        }
       }
 
       image_identifier      = "${local.account[local.environment]}.dkr.ecr.${local.region}.amazonaws.com/stackedit:latest"
