@@ -42,4 +42,6 @@ locals {
   ]
 
   s3_origin_id = "${local.environment}"
+
+  region = "{{terraform.state_file_region}}"
 }
