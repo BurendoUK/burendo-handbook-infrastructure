@@ -45,3 +45,29 @@ resource "aws_route53_record" "burendo_handbook" {
     evaluate_target_health = false
   }
 }
+
+resource "aws_route53_record" "edit" {
+  count   = local.deploy_fqdn[local.environment] == true ? 1 : 0
+  zone_id = aws_route53_zone.burendo_handbook.zone_id
+  name    = "edit.${local.environment_domain[local.environment]}"
+  type    = "CNAME"
+  records = [aws_apprunner_custom_domain_association.stackedit.dns_target]
+  ttl     = 300
+}
+
+resource "aws_route53_record" "edit_acm_validation" {
+  for_each = {
+    for entry in aws_apprunner_custom_domain_association.stackedit.certificate_validation_records : entry.name => {
+      name   = entry.name
+      record = entry.value
+      type   = entry.type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = aws_route53_zone.burendo_handbook.zone_id
+}
