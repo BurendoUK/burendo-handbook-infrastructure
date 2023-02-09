@@ -25,3 +25,9 @@ resource "aws_apprunner_service" "stackedit" {
 output "apprunner_service_stackedit" {
   value = aws_apprunner_service.stackedit
 }
+
+resource "aws_apprunner_custom_domain_association" "stackedit" {
+  provider    = aws.eire
+  domain_name = "edit.${local.environment_domain[local.environment]}"
+  service_arn = aws_apprunner_service.stackedit.arn
+}
