@@ -55,22 +55,21 @@ resource "aws_route53_record" "edit" {
   ttl     = 300
 }
 
-resource "aws_route53_record" "edit_acm_validation" {
-  depends_on = [
-    aws_apprunner_custom_domain_association.stackedit
-  ]
-  for_each = {
-    for entry in aws_apprunner_custom_domain_association.stackedit.certificate_validation_records : entry.name => {
-      name   = entry.name
-      record = entry.value
-      type   = entry.type
-    }
-  }
+# Uncomment in separate PR as the below requires aws_apprunner_custom_domain_association.stackedit to already be applied.
+#
+# resource "aws_route53_record" "edit_acm_validation" {
+#   for_each = {
+#     for entry in aws_apprunner_custom_domain_association.stackedit.certificate_validation_records : entry.name => {
+#       name   = entry.name
+#       record = entry.value
+#       type   = entry.type
+#     }
+#   }
 
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = aws_route53_zone.burendo_handbook.zone_id
-}
+#   allow_overwrite = true
+#   name            = each.value.name
+#   records         = [each.value.record]
+#   ttl             = 60
+#   type            = each.value.type
+#   zone_id         = aws_route53_zone.burendo_handbook.zone_id
+# }
