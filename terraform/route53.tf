@@ -55,6 +55,8 @@ resource "aws_route53_record" "edit" {
   ttl     = 300
 }
 
+# The below should be created separately to aws_apprunner_custom_domain_association.stackedit, as the entries the for_each uses are unknown until the apply.
+
 resource "aws_route53_record" "edit_acm_validation" {
   for_each = {
     for entry in aws_apprunner_custom_domain_association.stackedit.certificate_validation_records : entry.name => {
