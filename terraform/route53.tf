@@ -56,6 +56,9 @@ resource "aws_route53_record" "edit" {
 }
 
 resource "aws_route53_record" "edit_acm_validation" {
+  depends_on = [
+    aws_apprunner_custom_domain_association.stackedit
+  ]
   for_each = {
     for entry in aws_apprunner_custom_domain_association.stackedit.certificate_validation_records : entry.name => {
       name   = entry.name
