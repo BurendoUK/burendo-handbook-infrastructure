@@ -7,7 +7,6 @@ on:
   workflow_dispatch: {}
 
 env:
-  ENV_NAME: dev
   BUCKET_SUFFIX: handbook.burendo.com
 
 jobs:
@@ -35,7 +34,7 @@ jobs:
           role-skip-session-tagging: true
           aws-access-key-id: ${{ secrets.ACTIONS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ACTIONS_SECRET_ACCESS_KEY }}
-          role-to-assume: ${{ secrets.AWS_GHA_ROLE_DEV }}
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE }}
           role-duration-seconds: 900
           role-session-name: ${{ github.run_id }}-${{ github.run_number }}
           aws-region: eu-west-2
@@ -47,8 +46,8 @@ jobs:
           sed -i "s/Administrator/ci/" terraform/variables.tf
         working-directory: .
         env:
-          TF_WORKSPACE: default
-          AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE_DEV }}
+          TF_WORKSPACE: burendo-prod
+          AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Terraform Init"
@@ -56,7 +55,7 @@ jobs:
         run: terraform init
         working-directory: terraform
         env:
-          TF_WORKSPACE: default
+          TF_WORKSPACE: burendo-prod
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Terraform Plan"
@@ -65,7 +64,7 @@ jobs:
         working-directory: terraform
         continue-on-error: false
         env:
-          TF_WORKSPACE: default
+          TF_WORKSPACE: burendo-prod
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Pull PUBLIC handbook content"
@@ -98,14 +97,14 @@ jobs:
           set -e
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
 
-      - name: "Redact Logs DEV PR"
+      - name: "Redact Logs PR"
         if: ${{ always() }}
         id: redact-logs-pr
         run: |
-              sed -i "s/$ACC_DEV/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+              sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
         shell: bash
         env:
-          ACC_DEV: ${{ secrets.AWS_GHA_ACC_DEV }}
+          ACC_PROD: ${{ secrets.AWS_GHA_ACC }}
 
       - name: "Upload Plan log"
         uses: actions/upload-artifact@v2
