@@ -104,7 +104,7 @@ jobs:
               sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
         shell: bash
         env:
-          ACC_PROD: ${{ secrets.AWS_GHA_ACC }}
+          ACC_PROD: ${{ secrets.AWS_GHA_ACC_PROD }}
 
       - name: "Upload Plan log"
         uses: actions/upload-artifact@v2
