@@ -39,7 +39,10 @@ def main():
         terraform_secret['SecretBinary'])["terraform"]
     config_data['accounts'] = json.loads(
         terraform_secret['SecretBinary'])["accounts"]
-    config_data['github'] = json.loads(github_secret['SecretBinary'])["github"]
+    config_data['github'] = json.loads(
+        github_secret['SecretBinary'])["github"]
+    config_data['google'] = json.loads(
+        github_secret['SecretBinary'])["google"]
 
     with open("terraform/terraform.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
