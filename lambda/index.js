@@ -11,6 +11,7 @@ var region = 'eu-west-2';
 var iss = 'https://cognito-idp.' + region + '.amazonaws.com/' + USERPOOLID;
 var pems;
 
+pems = {};
 request(jwksUrl, options, (error, res, body) => {
   if (error) {
     return console.log(error)
