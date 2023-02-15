@@ -15,7 +15,7 @@ const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 const request = require('request-promise');
 
-const { handler } = require('./index');
+const { handler } = require('../index');
 
 jest.mock('request-promise');
 
