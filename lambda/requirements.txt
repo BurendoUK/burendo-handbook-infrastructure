@@ -1,0 +1,8 @@
+# Lambda function dependencies
+cryptography>=3.4.7
+PyJWT>=2.1.0
+urllib3>=1.26.7
+
+# Unit test dependencies
+pytest>=6.2.5
+pytest-mock>=3.6.1
