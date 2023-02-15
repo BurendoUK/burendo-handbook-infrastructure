@@ -2,10 +2,6 @@
 {
     "name": "Python, AWS CLI, Terraform, awsume, git",
     "image": "ubuntu:focal",
-    "extensions": [],
-    "settings": {
-        "terminal.integrated.shell.linux": "/bin/zsh"
-    },
     "mounts": [
         "source=${localEnv:HOME}/.aws,target=/root/.aws,type=bind,consistency=cached"
     ],
@@ -32,5 +28,19 @@
         "unzip terraform_1.2.6_linux_amd64.zip",
         "sudo mv terraform /usr/local/bin/",
         "rm terraform_1.2.6_linux_amd64.zip"
-    ]
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "zsh",
+                        "args": [],
+                        "icon": "terminal-ubuntu"
+                    }
+                },
+                "terminal.integrated.defaultProfile.linux": "zsh"
+            }
+        }
+    }
 }
