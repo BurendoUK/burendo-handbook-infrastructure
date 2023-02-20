@@ -4,7 +4,7 @@ resource "aws_lambda_function" "test_lambda" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "index.handler"
 
-  source_code_hash = filebase64sha256("../lambda/auth.zip")
+  source_code_hash = filebase64sha256("../lambda/lambda.zip")
 
   runtime = "python3.8"
 
