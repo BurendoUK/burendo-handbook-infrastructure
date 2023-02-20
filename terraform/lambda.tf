@@ -10,7 +10,8 @@ resource "aws_lambda_function" "test_lambda" {
 
   environment {
     variables = {
-      USERPOOLID = aws_cognito_user_pool.burendo.id
+      USER_POOL_ID  = aws_cognito_user_pool.burendo.id
+      APP_CLIENT_ID = aws_cognito_user_pool_client.burendo_client.id
     }
   }
 }
