@@ -1,46 +1,25 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see https://aka.ms/vscode-remote/devcontainer.json
 {
-    "name": "Python, AWS CLI, Terraform, awsume, git",
-    "image": "ubuntu:focal",
+    "name": "Burendo Devcontainer",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "mounts": [
-        "source=${localEnv:HOME}/.aws,target=/root/.aws,type=bind,consistency=cached"
-    ],
-    "runArgs": [
-        // Install oh-my-zsh and make zsh the default shell
-        "apt-get update",
-        "apt-get install -y zsh",
-        "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"",
-        "chsh -s $(which zsh) vscode",
-
-        // Install git
-        "apt-get update",
-        "apt-get install -y git",
-
-        // Install Python
-        "apt-get update",
-        "apt-get install -y python3 python3-pip",
-
-        // Install AWS CLI and awsume
-        "pip3 install awscli awsume",
-
-        // Install Terraform 1.2.6
-        "curl -O https://releases.hashicorp.com/terraform/1.2.6/terraform_1.2.6_linux_amd64.zip",
-        "unzip terraform_1.2.6_linux_amd64.zip",
-        "sudo mv terraform /usr/local/bin/",
-        "rm terraform_1.2.6_linux_amd64.zip"
+        "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached"
     ],
     "customizations": {
         "vscode": {
-            "settings": {
-                "terminal.integrated.profiles.linux": {
-                    "zsh": {
-                        "path": "zsh",
-                        "args": [],
-                        "icon": "terminal-ubuntu"
-                    }
-                },
-                "terminal.integrated.defaultProfile.linux": "zsh"
-            }
+            "extensions": [
+                // Copilot is a VS Code extension that helps you write code faster by generating code snippets and suggesting code completions, and is very much optional.
+                "GitHub.copilot", 
+                "ms-python.python",
+                "amazonwebservices.aws-toolkit-vscode",
+                "shakram02.bash-beautify",
+                "streetsidesoftware.code-spell-checker",
+                "ms-azuretools.vscode-docker",
+                "hashicorp.terraform",
+                "wholroyd.jinja",
+                "adamhartford.vscode-base64"
+            ]
         }
     }
 }
