@@ -28,3 +28,9 @@ burendo-handbook-public/*
 # node
 
 **/node_modules
+
+# python
+
+**/venv
+**/package
+**/lambda.zip
