@@ -50,6 +50,15 @@ jobs:
           AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
           AWS_DEFAULT_REGION: eu-west-2
 
+      - name: "Build Lambda"
+        id: lambda
+        run: |
+          make lambda-zip
+        working-directory: .
+        env:
+          TF_WORKSPACE: burendo-prod
+          AWS_DEFAULT_REGION: eu-west-2
+
       - name: "Terraform Init"
         id: init
         run: terraform init
