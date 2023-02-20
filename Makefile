@@ -25,3 +25,11 @@ bootstrap-terraform: ## Bootstrap local environment for first use
 git-hooks: ## Set up hooks in .githooks
 	@git submodule update --init .githooks ; \
 	git config core.hooksPath .githooks \
+
+.PHONY: lambda-zip
+lambda-zip: ## Make zip file for lambda
+	@cd lambda && \
+	pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography && \
+	pip3 install -r requirements.txt --target ./package && \
+	cp lambda_function.py ./package && \
+	zip -r lambda.zip ./package
