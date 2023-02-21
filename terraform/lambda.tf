@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "test_lambda" {
-  filename      = "../lambda/auth.zip"
+  filename      = "../lambda/lambda.zip"
   function_name = "handbook-auth"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "index.handler"
