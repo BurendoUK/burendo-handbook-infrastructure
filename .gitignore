@@ -34,3 +34,4 @@ burendo-handbook-public/*
 **/venv
 **/package
 **/lambda.zip
+**/__pycache__
