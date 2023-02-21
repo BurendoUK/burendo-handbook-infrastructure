@@ -21,7 +21,8 @@ resource "aws_cognito_identity_provider" "burendo_provider" {
   }
 
   attribute_mapping = {
-    email = "email"
+    email    = "email",
+    username = "sub"
   }
 }
 
