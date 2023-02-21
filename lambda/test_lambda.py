@@ -24,6 +24,21 @@ class TestLambdaFunction(unittest.TestCase):
         # Assert
         expected_result = {"statusCode": 200, "body": json.dumps({"message": "Access granted"})}
         self.assertEqual(result, expected_result)
+
+    @patch.dict("os.environ", {"USER_POOL_ID": "test_user_pool_id", "APP_CLIENT_ID": "test_app_client_id", "AWS_DEFAULT_REGION": "test_region"})
+    @patch("requests.get")
+    def test_valid_key(self, mock_requests_get):
+        # Arrange
+        payload = {"sub": "test_sub", "token_use": "access"}
+        invalid_access_token = jwt.encode(payload, "test_secret", algorithm="HS256", headers={"kid": "test_kid"})
+        event = {"headers": {"Authorization": f"Bearer {invalid_access_token}"}}
+        jwks_response = {"keys": [{"kty": "RSA", "kid": "test_kid_2", "use": "sig", "n": "test_n", "e": "AQAB"}]}
+        mock_requests_get.return_value.text = json.dumps(jwks_response)
+        result = lambda_handler(event, None)
+
+        # Assert
+        expected_result = {"statusCode": 401, "body": json.dumps({"message": "Unable to find appropriate key"})}
+        self.assertEqual(result, expected_result)
         
     @patch.dict("os.environ", {"USER_POOL_ID": "test_user_pool_id", "APP_CLIENT_ID": "test_app_client_id", "AWS_DEFAULT_REGION": "test-region"})
     def test_missing_auth_header(self):
