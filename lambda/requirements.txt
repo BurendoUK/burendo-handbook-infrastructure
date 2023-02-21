@@ -1,0 +1,9 @@
+# This is an arm64 lambda and the below dependencies are compiled for arm64. Cryptography is compiled for arm64 using the following steps:
+# 1. use the .devcontainer in the root of the repo to build the lambda
+# 2. Install cryptography using the following command: pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography
+# 3. Install the below dependencies using the following command: pip3 install -r requirements.txt --target ./package
+# 4. Copy the lambda_function.py file to the package folder
+# 5. Zip the package folder and upload it to the lambda function
+
+PyJWT>=2.1.0
+requests>=2.26.0

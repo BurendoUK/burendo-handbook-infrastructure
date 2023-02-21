@@ -1,0 +1,25 @@
+{
+    "name": "Burendo Devcontainer",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "mounts": [
+        "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // Copilot is a VS Code extension that helps you write code faster by generating code snippets and suggesting code completions, and is very much optional.
+                "GitHub.copilot", 
+                "ms-python.python",
+                "amazonwebservices.aws-toolkit-vscode",
+                "shakram02.bash-beautify",
+                "streetsidesoftware.code-spell-checker",
+                "ms-azuretools.vscode-docker",
+                "hashicorp.terraform",
+                "wholroyd.jinja",
+                "adamhartford.vscode-base64"
+            ]
+        }
+    }
+}
