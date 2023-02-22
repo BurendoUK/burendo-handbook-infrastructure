@@ -33,3 +33,7 @@ lambda-zip: ## Make zip file for lambda
 	pip3 install -r requirements.txt --target ./package && \
 	cp lambda_function.py ./package && \
 	zip -r lambda.zip ./package
+	pip3 install requests jwt --target ./lambda/decode
+	cp lambda/decode.py ./lambda/decode
+	zip -g lambda/decode.zip lambda/decode.py
+	zip -g lambda/auth.zip lambda/auth.py
