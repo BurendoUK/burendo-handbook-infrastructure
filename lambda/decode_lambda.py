@@ -1,45 +1,33 @@
-import json
-import requests
-import jwt
 import os
+import json
+import jwt
+import requests
 
-def decode_jwt(token):
-    # Retrieve the JSON Web Key Set (JWKS) for the user pool to extract the public key corresponding to the "kid" header in the access token
-    user_pool_id = os.environ["USER_POOL_ID"]
-    region = os.environ["AWS_DEFAULT_REGION"]
-    jwks_url = "https://cognito-idp.{region}.amazonaws.com/{user_pool_id}/.well-known/jwks.json".format(region=region, user_pool_id=user_pool_id)
-    response = requests.get(jwks_url)
+USER_POOL_ID = os.environ['USER_POOL_ID']
+APP_CLIENT_ID = os.environ['APP_CLIENT_ID']
+AWS_DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
+
+def decode_jwt(event, context):
+    # Get the access token from the Authorization header
+    access_token = event['headers']['Authorization'].split()[1]
+    # Retrieve the public key for decoding the JWT
+    keys_url = f'https://cognito-idp.{AWS_DEFAULT_REGION}.amazonaws.com/{USER_POOL_ID}/.well-known/jwks.json'
+    response = requests.get(keys_url)
     jwks = json.loads(response.text)
-    
-    # Verify the signature of the access token using the public key
-    unverified_header = jwt.get_unverified_header(token)
-    rsa_key = {}
-    for key in jwks["keys"]:
-        if key["kid"] == unverified_header["kid"]:
-            rsa_key = {
-                "kty": key["kty"],
-                "kid": key["kid"],
-                "use": key["use"],
-                "n": key["n"],
-                "e": key["e"]
-            }
+    key = None
+    for k in jwks["keys"]:
+        if k['kid'] == jwt.get_unverified_header(access_token)['kid']:
+            key = k
             break
-    if not rsa_key:
-        return None
-    
+    if key is None:
+        return {"statusCode": 401, "body": json.dumps({"message": "Missing RSA Key"})}
+
+    # Decode the access token using the public key and verify the signature
     try:
-        # Check the "iss" and "token_use" claims to ensure that the token is valid and can be used to grant access to protected resources
-        payload = jwt.decode(
-            token,
-            rsa_key,
-            algorithms=["RS256"],
-            audience=os.environ["APP_CLIENT_ID"],
-            issuer="https://cognito-idp.{region}.amazonaws.com/{user_pool_id}".format(region=region, user_pool_id=user_pool_id),
-            options={"verify_exp": False}
-        )
-        if payload["token_use"] != "access":
-            return None
+        payload = jwt.decode(access_token, key, algorithms=['RS256'], audience=APP_CLIENT_ID)
+        if payload['token_use'] == 'access':
+            return {"statusCode": 200, "body": json.dumps({"message": "Access granted"})}
         else:
-            return payload
-    except:
-        return None
+            return {"statusCode": 401, "body": json.dumps({"message": "Invalid access token"})}
+    except jwt.exceptions.InvalidTokenError:
+        return {"statusCode": 401, "body": json.dumps({"message": "Invalid access token"})}
