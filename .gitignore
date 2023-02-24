@@ -13,6 +13,7 @@
 *.iml
 .idea/
 .terraform.lock.hcl
+.DS_Store
 
 # bootstrap generated files
 **/terraform.tf
