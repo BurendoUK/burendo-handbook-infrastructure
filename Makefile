@@ -28,12 +28,9 @@ git-hooks: ## Set up hooks in .githooks
 
 .PHONY: lambda-zip
 lambda-zip: ## Make zip file for lambda
-	@cd lambda && \
-	pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography && \
-	pip3 install -r requirements.txt --target ./package && \
-	cp lambda_function.py ./package && \
-	zip -r lambda.zip ./package
+	@pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target .lambda/decode cryptography && \
+	pip3 install -r requirements.txt --target .lambda/decode && \
 	pip3 install requests jwt --target ./lambda/decode
-	cp lambda/decode.py ./lambda/decode
-	zip -g lambda/decode.zip lambda/decode.py
-	zip -g lambda/auth.zip lambda/auth.py
+	cp lambda/decode_lambda.py ./lambda/decode
+	zip -9 lambda/decode.zip lambda/decode
+	zip -9 lambda/auth.zip lambda/auth_lambda.py
