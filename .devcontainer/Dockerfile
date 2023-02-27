@@ -15,6 +15,10 @@ RUN apt-get update && apt-get install -y \
   python3-pip \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install nodejs
+RUN curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - && \
+  sudo apt-get install -y nodejs build-essential
+
 # Install AWS CLI and awsume
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
   unzip awscliv2.zip && \
