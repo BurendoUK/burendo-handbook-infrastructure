@@ -15,7 +15,7 @@ To update the content used to create the handbook, modify in the respective cont
 ### Running locally
 
 Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs.
-Then enter `burendo-handbook` folder and run `npm install` && `npm run-script docusaurus start`.
+Then `make handbook-local`
 
 ## The Lambda
 
