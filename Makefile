@@ -35,3 +35,8 @@ lambda-zip: ## Make zip file for lambda
 	pip3 install requests jwt --target decode && \
 	zip -9 -r decode.zip decode
 	
+.PHONY: handbook-local
+handbook-local: ## Run handbook locally
+	@cd burendo-handbook && \
+	npm install && \
+	npm run-script docusaurus start
