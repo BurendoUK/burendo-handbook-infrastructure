@@ -10,7 +10,6 @@ jobs:
   pull-request:
     name: "Build Handbook content"
     runs-on: ubuntu-latest
-    needs: deploy-infra
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
