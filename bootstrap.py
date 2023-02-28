@@ -43,6 +43,8 @@ def main():
         github_secret['SecretBinary'])["github"]
     config_data['google'] = json.loads(
         github_secret['SecretBinary'])["google"]
+    config_data['aws'] = json.loads(
+        github_secret['SecretBinary'])["aws"]
 
     with open("terraform/terraform.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
@@ -59,6 +61,10 @@ def main():
     with open("terraform/locals.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
     with open("terraform/locals.tf", "w+") as terraform_tf:
+        terraform_tf.write(template.render(config_data))
+    with open("burendo-handbook/.env.j2") as in_template:
+        template = jinja2.Template(in_template.read())
+    with open("burendo-handbook/.env", "w+") as terraform_tf:
         terraform_tf.write(template.render(config_data))
     print("Terraform config successfully created")
 
