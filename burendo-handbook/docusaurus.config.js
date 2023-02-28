@@ -3,6 +3,8 @@
 
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+require('dotenv').config();
+console.log(process.env)
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -81,6 +83,11 @@ const config = {
             href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
             label: "GitHub",
             position: "right",
+          },
+          {
+            href: process.env.BURENDO_LOGIN_URL,
+            label: 'Login',
+            position: 'right',
           },
         ],
       },

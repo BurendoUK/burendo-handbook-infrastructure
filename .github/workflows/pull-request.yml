@@ -10,9 +10,37 @@ jobs:
   pull-request:
     name: "Build Handbook content"
     runs-on: ubuntu-latest
-    needs: deploy-infra
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: "Install dependencies"
+        id: deps
+        run: pip install Jinja2 PyYAML boto3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-skip-session-tagging: true
+          aws-access-key-id: ${{ secrets.ACTIONS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ACTIONS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE }}
+          role-duration-seconds: 900
+          role-session-name: ${{ github.run_id }}-${{ github.run_number }}
+          aws-region: eu-west-2
+
+      - name: "Bootstrap"
+        id: bootstrap
+        run: |
+          python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+          sed -i "s/Administrator/ci/" terraform/variables.tf
+        working-directory: .
+        env:
+          TF_WORKSPACE: burendo-prod
+          AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
+          AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Pull PUBLIC handbook content"
         id: public-content
