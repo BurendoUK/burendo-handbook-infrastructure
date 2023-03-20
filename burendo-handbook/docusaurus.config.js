@@ -50,7 +50,12 @@ const config = {
           // editUrl:
           //   "https://github.com/BurendoUK/burendo-handbook-public/blob/main/",
         },
-        blog: false,
+        blog: {
+          blogTitle: 'Burendo blog!',
+          blogDescription: 'Thoughts from our Burendoers',
+          postsPerPage: 'ALL',
+          showReadingTime: true,
+        },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
@@ -88,6 +93,11 @@ const config = {
             href: process.env.BURENDO_LOGIN_URL,
             label: 'Login',
             position: 'right',
+          },
+          {
+            to: 'blog', 
+            label: 'Blog', 
+            position: 'right'
           },
         ],
       },
