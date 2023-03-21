@@ -86,7 +86,7 @@ const config = {
         items: [
           {
             href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
-            label: "GitHub",
+            label: "GitHub Repo",
             position: "right",
           },
           {
@@ -125,7 +125,7 @@ const config = {
             title: "More",
             items: [
               {
-                label: "GitHub",
+                label: "GitHub Org",
                 href: "https://github.com/BurendoUK",
               },
             ],
