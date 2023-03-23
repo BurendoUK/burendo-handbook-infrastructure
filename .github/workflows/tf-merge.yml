@@ -179,8 +179,8 @@ jobs:
       - name: "Move LABS handbook content"
         id: labs-content-copy
         run: |
-          mkdir -p burendo-handbook/docs/Engineering/Labs
-          mv burendo-aws-labs/Labs/* burendo-handbook/docs/Engineering/Labs
+          mkdir -p "burendo-handbook/docs/Our Practices/Engineering/Labs"
+          mv burendo-aws-labs/Labs/* "burendo-handbook/docs/Our Practices/Engineering/Labs"
         working-directory: .
         continue-on-error: false
 
