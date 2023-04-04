@@ -66,10 +66,10 @@ jobs:
         continue-on-error: false
 
       - name: "Pull PRIVATE handbook content"
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: BurendoUK/burendo-handbook-private
-          token: ${{ github.github_token }}
+          token: ${{ secrets.GH_TOKEN }}
       
       - name: "Move PRIVATE handbook content"
         id: private-content-copy
