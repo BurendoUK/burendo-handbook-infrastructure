@@ -1,13 +1,21 @@
-name: "Pull Request"
+name: "Merge Private to Main"
 on:
-  pull_request:
-
+  push:
+    branches:
+      - main
     paths-ignore:
+      - "lambda/**"
       - "**/*.tf"
+      - ".github/workflows/**"
   workflow_dispatch: {}
+  repository_dispatch:
+    types: [content-updated-private]
+
+env:
+  BUCKET_SUFFIX: private.handbook.burendo.com
 
 jobs:
-  pull-request:
+  build-handbook:
     name: "Build Handbook content"
     runs-on: ubuntu-latest
     steps:
@@ -84,26 +92,6 @@ jobs:
         working-directory: .
         continue-on-error: false
 
-      - name: "Rename Public Sidebars Config"
-        id: rename-public-config
-        run: mv sidebars.public.js sidebars.js
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Build handbook with content"
-        id: build-public-handbook
-        run: |
-          npm install
-          npm run build
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Reset Sidebars Config"
-        id: reset-config
-        run: mv sidebars.js sidebars.public.js
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
       - name: "Rename Private Sidebars Config"
         id: rename-private-config
         run: mv sidebars.private.js sidebars.js
@@ -111,9 +99,22 @@ jobs:
         continue-on-error: false
 
       - name: "Build handbook with content"
-        id: build-private-handbook
+        id: build-handbook
         run: |
           npm install
           npm run build
         working-directory: ./burendo-handbook
         continue-on-error: false
+
+      - name: "Copy build output to S3"
+        id: copy-to-s3
+        run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
+        working-directory: burendo-handbook
+        continue-on-error: false
+
+      - name: "Terminate Session"
+        if: ${{ always() }}
+        id: terminate-session
+        run: |
+          set -e
+          aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}

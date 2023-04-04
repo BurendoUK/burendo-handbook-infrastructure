@@ -9,6 +9,8 @@ To update the content used to create the handbook, modify in the respective cont
 [burendo-handbook-public](https://github.com/BurendoUK/burendo-handbook-public)
 [burendo-handbook-private](https://github.com/BurendoUK/burendo-handbook-private)
 
+Each set of content is saved to a separate S3 bucket so that the private content can only be viewed when logged in to the handbook.
+
 ### Architecture
 ![Handbook architecture](handbook-architecture.png)
 
@@ -16,6 +18,14 @@ To update the content used to create the handbook, modify in the respective cont
 
 Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs.
 Then `make handbook-local`
+
+## Menus
+
+There are two menu files - one for the public version of the handbook and one for the private. The github workflows rename the relevant file to `sidebars.js` and then build the handbook. The PR workflows test both menu configurations build successfully and for merging there are workflows for public and private separately.
+
+### Private menu
+
+The private menu file ([sidebars.private.js](burendo-handbook/sidebars.private.js)) contains a second menu which has the `private` folder. This is where the private content goes and the menus are then spliced together when logged in.
 
 ## The Lambda
 

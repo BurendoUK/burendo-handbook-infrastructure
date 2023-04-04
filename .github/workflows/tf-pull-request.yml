@@ -6,9 +6,6 @@ on:
       - ".github/workflows/**"
   workflow_dispatch: {}
 
-env:
-  BUCKET_SUFFIX: handbook.burendo.com
-
 jobs:
   pull-request:
     name: "Terraform Pull Request"
@@ -75,37 +72,6 @@ jobs:
         env:
           TF_WORKSPACE: burendo-prod
           AWS_DEFAULT_REGION: eu-west-2
-
-      - name: "Pull PUBLIC handbook content"
-        id: public-content
-        run: |
-          git clone https://github.com/BurendoUK/burendo-handbook-public.git
-        working-directory: .
-        continue-on-error: false
-      
-      - name: "Move PUBLIC handbook content"
-        id: public-content-copy
-        run: |
-          mkdir -p burendo-handbook/docs
-          mv burendo-handbook-public/docs/* burendo-handbook/docs
-        working-directory: .
-        continue-on-error: false
-      
-      - name: "Move PUBLIC blog content"
-        id: public-content-copy
-        run: |
-          mkdir -p burendo-handbook/blog
-          mv burendo-handbook-public/blog/* burendo-handbook/blog
-        working-directory: .
-        continue-on-error: false
-
-      - name: "Build handbook with content"
-        id: build-handbook
-        run: |
-          npm install
-          npm run build
-        working-directory: ./burendo-handbook
-        continue-on-error: false
 
       - name: "Terminate Session"
         if: ${{ always() }}

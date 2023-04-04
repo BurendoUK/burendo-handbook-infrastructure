@@ -1,4 +1,4 @@
-name: "Merge to Main"
+name: "Merge Public to Main"
 on:
   push:
     branches:
@@ -71,6 +71,12 @@ jobs:
           mkdir -p burendo-handbook/blog
           mv burendo-handbook-public/blog/* burendo-handbook/blog
         working-directory: .
+        continue-on-error: false
+
+      - name: "Rename Public Sidebars Config"
+        id: rename-public-config
+        run: mv sidebars.public.js sidebars.js
+        working-directory: ./burendo-handbook
         continue-on-error: false
 
       - name: "Build handbook with content"
