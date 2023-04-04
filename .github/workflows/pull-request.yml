@@ -65,6 +65,21 @@ jobs:
         working-directory: .
         continue-on-error: false
 
+      - name: "Pull PRIVATE handbook content"
+        id: private-content
+        run: |
+          git clone https://github.com/BurendoUK/burendo-handbook-private.git
+        working-directory: .
+        continue-on-error: false
+      
+      - name: "Move PRIVATE handbook content"
+        id: private-content-copy
+        run: |
+          mkdir -p burendo-handbook/docs
+          mv burendo-handbook-private/docs/* burendo-handbook/docs
+        working-directory: .
+        continue-on-error: false
+
       - name: "Build handbook with content"
         id: build-handbook
         run: |
