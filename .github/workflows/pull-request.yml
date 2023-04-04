@@ -79,13 +79,39 @@ jobs:
       - name: "Move PRIVATE handbook content"
         id: private-content-copy
         run: |
-          mkdir -p burendo-handbook/docs
-          mv burendo-handbook-private/docs/* burendo-handbook/docs
+          mkdir -p burendo-handbook/docs/private
+          mv burendo-handbook-private/docs/* burendo-handbook/docs/private
         working-directory: .
         continue-on-error: false
 
+      - name: "Rename Public Sidebars Config"
+        id: rename-public-config
+        run: mv sidebars.public.js sidebars.js
+        working-directory: ./burendo-handbook
+        continue-on-error: false
+
       - name: "Build handbook with content"
-        id: build-handbook
+        id: build-public-handbook
+        run: |
+          npm install
+          npm run build
+        working-directory: ./burendo-handbook
+        continue-on-error: false
+
+      - name: "ResetSidebars Config"
+        id: reset-config
+        run: mv sidebars.js sidebars.public.js
+        working-directory: ./burendo-handbook
+        continue-on-error: false
+
+      - name: "Rename Private Sidebars Config"
+        id: rename-private-config
+        run: mv sidebars.private.js sidebars.js
+        working-directory: ./burendo-handbook
+        continue-on-error: false
+
+      - name: "Build handbook with content"
+        id: build-private-handbook
         run: |
           npm install
           npm run build

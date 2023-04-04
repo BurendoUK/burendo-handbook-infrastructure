@@ -73,55 +73,6 @@ jobs:
           TF_WORKSPACE: burendo-prod
           AWS_DEFAULT_REGION: eu-west-2
 
-      - name: "Pull PUBLIC handbook content"
-        id: public-content
-        run: |
-          git clone https://github.com/BurendoUK/burendo-handbook-public.git
-        working-directory: .
-        continue-on-error: false
-      
-      - name: "Move PUBLIC handbook content"
-        id: public-content-copy
-        run: |
-          mkdir -p burendo-handbook/docs
-          mv burendo-handbook-public/docs/* burendo-handbook/docs
-        working-directory: .
-        continue-on-error: false
-      
-      - name: "Move PUBLIC blog content"
-        id: public-content-copy
-        run: |
-          mkdir -p burendo-handbook/blog
-          mv burendo-handbook-public/blog/* burendo-handbook/blog
-        working-directory: .
-        continue-on-error: false
-
-      - name: "Pull PRIVATE handbook content"
-        id: private-content
-        run: |
-          echo "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/BurendoUK/burendo-handbook-private"
-          git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/BurendoUK/burendo-handbook-private
-        working-directory: .
-        continue-on-error: false
-        env:
-          GITHUB_USER: ${{ secrets.GH_USER }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      
-      - name: "Move PRIVATE handbook content"
-        id: private-content-copy
-        run: |
-          mv burendo-handbook-private/docs/* burendo-handbook/docs
-        working-directory: .
-        continue-on-error: false
-
-      - name: "Build handbook with content"
-        id: build-handbook
-        run: |
-          npm install
-          npm run build
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
       - name: "Terminate Session"
         if: ${{ always() }}
         id: terminate-session
