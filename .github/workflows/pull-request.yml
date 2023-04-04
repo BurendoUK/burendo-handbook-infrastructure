@@ -68,10 +68,12 @@ jobs:
       - name: "Pull PRIVATE handbook content"
         id: private-content
         run: |
-          git clone https://github.com/BurendoUK/burendo-handbook-private.git
+          echo "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/BurendoUK/burendo-handbook-private"
+          git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/BurendoUK/burendo-handbook-private
         working-directory: .
         continue-on-error: false
         env:
+          GITHUB_USER: ${{ secrets.GH_USER }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       
       - name: "Move PRIVATE handbook content"
