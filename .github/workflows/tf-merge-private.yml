@@ -1,17 +1,20 @@
-name: "Pull Request"
+name: "Terraform Merge to Main"
 on:
-  pull_request:
+  push:
+    branches:
+      - main
     paths:
       - "**/*.tf"
       - ".github/workflows/**"
   workflow_dispatch: {}
 
+env:
+  BUCKET_SUFFIX: private.handbook.burendo.com
+
 jobs:
-  pull-request:
-    name: "Terraform Pull Request"
+  deploy-infra:
+    name: "Terraform Apply Production"
     runs-on: ubuntu-latest
-    env:
-      TF_LOG: "ERROR"
     steps:
       - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v1
@@ -39,7 +42,7 @@ jobs:
       - name: "Bootstrap"
         id: bootstrap
         run: |
-          python bootstrap.py
+          python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
           sed -i "s/Administrator/ci/" terraform/variables.tf
         working-directory: .
         env:
@@ -58,19 +61,89 @@ jobs:
 
       - name: "Terraform Init"
         id: init
-        run: terraform init
+        run: terraform init >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
         working-directory: terraform
         env:
           TF_WORKSPACE: burendo-prod
           AWS_DEFAULT_REGION: eu-west-2
 
-      - name: "Terraform Plan"
-        id: plan
-        run: terraform plan -no-color >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+      - name: "Terraform Apply"
+        id: apply
+        run: |
+          terraform plan -no-color -out terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+          terraform apply -no-color -auto-approve terraform.plan >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
         working-directory: terraform
         continue-on-error: false
         env:
           TF_WORKSPACE: burendo-prod
+          TF_INPUT: false
+          AWS_DEFAULT_REGION: eu-west-2
+
+      - name: "Terraform Plan"
+        id: plan
+        run: terraform plan -no-color -detailed-exitcode >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        working-directory: terraform
+        continue-on-error: false
+        env:
+          TF_WORKSPACE: burendo-prod
+          TF_INPUT: false
+          AWS_DEFAULT_REGION: eu-west-2
+
+      - name: "Terminate Session"
+        if: ${{ always() }}
+        id: terminate-session
+        run: |
+          set -e
+          aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
+
+      - name: "Redact Logs PROD"
+        if: ${{ always() }}
+        id: redact-logs-prod
+        run: |
+              sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+        shell: bash
+        env:
+          ACC_PROD: ${{ secrets.AWS_GHA_ACC_PROD }}
+
+      - name: "Upload Plan log"
+        uses: actions/upload-artifact@v2
+        id: upload-plan-log
+        if: ${{ failure() }}
+        with:
+          name: prod-workflow-log
+          path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+
+  build-handbook:
+    name: "Build Handbook content"
+    runs-on: ubuntu-latest
+    needs: deploy-infra
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install dependencies"
+        id: deps
+        run: pip install Jinja2 PyYAML boto3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-skip-session-tagging: true
+          aws-access-key-id: ${{ secrets.ACTIONS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ACTIONS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE }}
+          role-duration-seconds: 900
+          role-session-name: ${{ github.run_id }}-${{ github.run_number }}
+          aws-region: eu-west-2
+
+      - name: "Bootstrap"
+        id: bootstrap
+        run: |
+          python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
+          sed -i "s/Administrator/ci/" terraform/variables.tf
+        working-directory: .
+        env:
+          TF_WORKSPACE: burendo-prod
+          AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Pull PUBLIC handbook content"
@@ -89,7 +162,7 @@ jobs:
         continue-on-error: false
       
       - name: "Move PUBLIC blog content"
-        id: public-content-copy
+        id: public-blog-copy
         run: |
           mkdir -p burendo-handbook/blog
           mv burendo-handbook-public/blog/* burendo-handbook/blog
@@ -119,26 +192,15 @@ jobs:
         working-directory: ./burendo-handbook
         continue-on-error: false
 
+      - name: "Copy build output to S3"
+        id: copy-to-s3
+        run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
+        working-directory: burendo-handbook
+        continue-on-error: false
+
       - name: "Terminate Session"
         if: ${{ always() }}
         id: terminate-session
         run: |
           set -e
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
-
-      - name: "Redact Logs PR"
-        if: ${{ always() }}
-        id: redact-logs-pr
-        run: |
-              sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-        shell: bash
-        env:
-          ACC_PROD: ${{ secrets.AWS_GHA_ACC_PROD }}
-
-      - name: "Upload Plan log"
-        uses: actions/upload-artifact@v2
-        id: upload-plan-log
-        if: ${{ failure() }}
-        with:
-          name: pr-workflow-log
-          path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log

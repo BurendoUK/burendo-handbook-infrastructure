@@ -1,22 +1,25 @@
-name: "Pull Request"
+name: "Merge Public to Main"
 on:
-  pull_request:
-    paths:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "lambda/**"
       - "**/*.tf"
       - ".github/workflows/**"
   workflow_dispatch: {}
+  repository_dispatch:
+    types: [content-updated]
+
+env:
+  BUCKET_SUFFIX: handbook.burendo.com
 
 jobs:
-  pull-request:
-    name: "Terraform Pull Request"
+  build-handbook:
+    name: "Build Handbook content"
     runs-on: ubuntu-latest
-    env:
-      TF_LOG: "ERROR"
     steps:
       - uses: actions/checkout@v2
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: ${{ secrets.TERRAFORM_VERSION }}
       - uses: actions/setup-python@v2
         with:
           python-version: "3.x"
@@ -39,38 +42,12 @@ jobs:
       - name: "Bootstrap"
         id: bootstrap
         run: |
-          python bootstrap.py
+          python bootstrap.py > ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
           sed -i "s/Administrator/ci/" terraform/variables.tf
         working-directory: .
         env:
           TF_WORKSPACE: burendo-prod
           AWS_SECRETS_ROLE: ${{ secrets.AWS_GHA_ROLE }}
-          AWS_DEFAULT_REGION: eu-west-2
-
-      - name: "Build Lambda"
-        id: lambda
-        run: |
-          make lambda-zip
-        working-directory: .
-        env:
-          TF_WORKSPACE: burendo-prod
-          AWS_DEFAULT_REGION: eu-west-2
-
-      - name: "Terraform Init"
-        id: init
-        run: terraform init
-        working-directory: terraform
-        env:
-          TF_WORKSPACE: burendo-prod
-          AWS_DEFAULT_REGION: eu-west-2
-
-      - name: "Terraform Plan"
-        id: plan
-        run: terraform plan -no-color >> ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-        working-directory: terraform
-        continue-on-error: false
-        env:
-          TF_WORKSPACE: burendo-prod
           AWS_DEFAULT_REGION: eu-west-2
 
       - name: "Pull PUBLIC handbook content"
@@ -89,25 +66,10 @@ jobs:
         continue-on-error: false
       
       - name: "Move PUBLIC blog content"
-        id: public-content-copy
+        id: public-blog-copy
         run: |
           mkdir -p burendo-handbook/blog
           mv burendo-handbook-public/blog/* burendo-handbook/blog
-        working-directory: .
-        continue-on-error: false
-
-      - name: "Pull PRIVATE handbook content"
-        id: private-content
-        run: |
-          git clone https://github.com/BurendoUK/burendo-handbook-private.git
-        working-directory: .
-        continue-on-error: false
-      
-      - name: "Move PRIVATE handbook content"
-        id: private-content-copy
-        run: |
-          mkdir -p burendo-handbook/docs
-          mv burendo-handbook-private/docs/* burendo-handbook/docs
         working-directory: .
         continue-on-error: false
 
@@ -119,26 +81,15 @@ jobs:
         working-directory: ./burendo-handbook
         continue-on-error: false
 
+      - name: "Copy build output to S3"
+        id: copy-to-s3
+        run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
+        working-directory: burendo-handbook
+        continue-on-error: false
+
       - name: "Terminate Session"
         if: ${{ always() }}
         id: terminate-session
         run: |
           set -e
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
-
-      - name: "Redact Logs PR"
-        if: ${{ always() }}
-        id: redact-logs-pr
-        run: |
-              sed -i "s/$ACC_PROD/REDACTED/g" ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
-        shell: bash
-        env:
-          ACC_PROD: ${{ secrets.AWS_GHA_ACC_PROD }}
-
-      - name: "Upload Plan log"
-        uses: actions/upload-artifact@v2
-        id: upload-plan-log
-        if: ${{ failure() }}
-        with:
-          name: pr-workflow-log
-          path: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}.log
