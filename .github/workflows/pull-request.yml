@@ -98,7 +98,7 @@ jobs:
         working-directory: ./burendo-handbook
         continue-on-error: false
 
-      - name: "ResetSidebars Config"
+      - name: "Reset Sidebars Config"
         id: reset-config
         run: mv sidebars.js sidebars.public.js
         working-directory: ./burendo-handbook
