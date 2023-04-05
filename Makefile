@@ -35,8 +35,16 @@ lambda-zip: ## Make zip file for lambda
 	pip3 install requests jwt --target decode && \
 	zip -9 -r decode.zip decode
 	
-.PHONY: handbook-local
+.PHONY: handbook-local-public
 handbook-local: ## Run handbook locally
 	@cd burendo-handbook && \
+	mv sidebars.public.js sidebars.js
+	npm install && \
+	npm run-script docusaurus start
+	
+.PHONY: handbook-local-private
+handbook-local: ## Run handbook locally
+	@cd burendo-handbook && \
+	mv sidebars.private.js sidebars.js
 	npm install && \
 	npm run-script docusaurus start

@@ -17,7 +17,7 @@ Each set of content is saved to a separate S3 bucket so that the private content
 ### Running locally
 
 Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs.
-Then `make handbook-local`
+Then `make handbook-local-public` to use the public content and sidebars or `make-handbook-private` to run with private and public content and sidebars. Running these creates local build files and a local `sidebars.js` file that is git ignored.
 
 ## Menus
 

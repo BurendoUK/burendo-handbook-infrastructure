@@ -42,4 +42,15 @@ locals {
   ]
 
   s3_origin_id = "${local.environment}"
+  
+  custom_origin_headers = [
+    {
+      "name": "Public_S3_Bucket",
+      "value": aws_s3_bucket.burendo_handbook.bucket_regional_domain_name
+    },
+    {
+      "name": "Private_S3_Bucket",
+      "value": aws_s3_bucket.burendo_handbook_private.bucket_regional_domain_name
+    }
+  ]
 }

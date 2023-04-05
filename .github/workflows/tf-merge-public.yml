@@ -183,7 +183,7 @@ jobs:
         working-directory: ./burendo-handbook
         continue-on-error: false
 
-      - name: "Copy build output to S3"
+      - name: "Copy build output to PUBLIC S3"
         id: copy-to-s3
         run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
         working-directory: burendo-handbook
