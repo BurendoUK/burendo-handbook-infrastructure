@@ -29,11 +29,19 @@ git-hooks: ## Set up hooks in .githooks
 .PHONY: lambda-zip
 lambda-zip: ## Make zip file for lambda
 	@cd lambda && \
+	rm -rf decode/ && \
+	rm -rf verify/ && \
+	rm -f decode.zip && \
 	zip -9 auth.zip auth_lambda.py && \
-	pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target decode cryptography && \
-	pip3 install -r requirements.txt --target decode && \
-	pip3 install requests jwt --target decode && \
-	zip -9 -r decode.zip decode
+	pip3 install --platform manylinux2014_x86_64 --implementation cp --python 3.9 --no-cache-dir --only-binary=:all: --upgrade --target decode cryptography==38.0.3 && \
+	pip3 install -r requirements.txt --no-cache-dir --target decode && \
+	zip -9 -r decode.zip decode && \
+	pip3 install --platform manylinux2014_x86_64 --implementation cp --python 3.9 --no-cache-dir --only-binary=:all: --upgrade --target verify cryptography==38.0.3 && \
+	pip3 install -r requirements.txt --no-cache-dir --target verify && \
+	cd verify && \
+	zip -9 -r verify.zip . && \
+	cd ../ && \
+	zip -9 -r verify/verify.zip verify_code_lambda.py
 	
 .PHONY: handbook-local-public
 handbook-local: ## Run handbook locally

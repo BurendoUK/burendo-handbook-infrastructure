@@ -5,6 +5,5 @@
 # 4. Copy the lambda_function.py file to the package folder
 # 5. Zip the package folder and upload it to the lambda function
 
-PyJWT>=2.1.0
+pyjwt>=2.1.0
 requests>=2.26.0
-boto3>=1.18.0

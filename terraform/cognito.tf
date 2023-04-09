@@ -30,9 +30,9 @@ resource "aws_cognito_user_pool_client" "burendo_client" {
   name = "burendo client"
 
   user_pool_id                         = aws_cognito_user_pool.burendo.id
-  callback_urls                        = ["https://${local.environment_domain[local.environment]}"]
+  callback_urls                        = [local.callback_url]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows                  = ["implicit"]
+  allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   supported_identity_providers         = ["Google"]
 }

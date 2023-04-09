@@ -42,6 +42,8 @@ locals {
   ]
 
   s3_origin_id = "${local.environment}"
+
+  callback_url = "https://${local.environment_domain[local.environment]}/"
   
   custom_origin_headers = [
     {
@@ -51,6 +53,22 @@ locals {
     {
       "name": "Private_S3_Bucket",
       "value": aws_s3_bucket.burendo_handbook_private.bucket_regional_domain_name
+    },
+    {
+      "name": "Callback_Url",
+      "value": local.callback_url
+    },
+    {
+      "name": "Client_Id",
+      "value": aws_cognito_user_pool_client.burendo_client.id
+    },
+    {
+      "name": "Cognito_Domain_Url",
+      "value": "https://${aws_cognito_user_pool_domain.burendo_domain.domain}.auth.${var.region}.amazoncognito.com"
+    },
+    {
+      "name": "Cognito_Jwks_Url",
+      "value": "https://cognito-idp.${var.region}.amazonaws.com/${aws_cognito_user_pool.burendo.id}/.well-known/jwks.json"
     }
   ]
 }

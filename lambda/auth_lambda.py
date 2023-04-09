@@ -51,24 +51,3 @@ def lambda_handler(event, context):
         }
     
     return request
-
-def invoke_decode_jwt_lambda(token):
-    # Set up the client for invoking the Lambda function
-    lambda_client = boto3.client('lambda')
-    
-    # Set the input and payload for the new Lambda function
-    input_payload = {
-        'token': token
-    }
-    payload = json.dumps(input_payload)
-    
-    # Invoke the new Lambda function
-    response = lambda_client.invoke(
-        FunctionName='decode-lambda',
-        Payload=payload
-    )
-    
-    # Parse the response from the new Lambda function
-    payload = json.loads(response['Payload'].read().decode())
-    
-    return payload

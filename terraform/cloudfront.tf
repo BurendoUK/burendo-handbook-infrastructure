@@ -22,16 +22,32 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
   aliases = local.deploy_fqdn[local.environment] == true ? [local.environment_domain[local.environment]] : []
 
   default_cache_behavior {
-    allowed_methods          = ["GET", "HEAD"]
-    cached_methods           = ["GET", "HEAD"]
-    target_origin_id         = local.s3_origin_id
-    cache_policy_id          = aws_cloudfront_cache_policy.handbook_distribution_cache_policy.id
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.s3_origin_id
+    cache_policy_id  = aws_cloudfront_cache_policy.handbook_distribution_cache_policy.id
 
     viewer_protocol_policy = "redirect-to-https"
 
     lambda_function_association {
-      event_type   = "viewer-request"
-      lambda_arn   = aws_lambda_function.auth_lambda.qualified_arn
+      event_type   = "origin-request"
+      lambda_arn   = aws_lambda_function.verify_code_lambda.qualified_arn
+      include_body = true
+    }
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "*/login*"
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = local.s3_origin_id
+    cache_policy_id        = aws_cloudfront_cache_policy.handbook_distribution_cache_policy.id
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
+
+    lambda_function_association {
+      event_type   = "origin-request"
+      lambda_arn   = aws_lambda_function.verify_code_lambda.qualified_arn
       include_body = true
     }
   }
@@ -86,10 +102,27 @@ resource "aws_cloudfront_cache_policy" "handbook_distribution_cache_policy" {
       }
     }
     query_strings_config {
-      query_string_behavior = "all"
+      query_string_behavior = "whitelist"
+      query_strings {
+        items = [
+          "code"
+        ]
+      }
     }
   }
 }
+
+# resource "aws_cloudfront_function" "switch_origin" {
+# 	name    = "rewrite-request-${random_id.id.hex}"
+# 	runtime = "cloudfront-js-1.0"
+# 	code    = <<EOF
+# function handler(event) {
+# 	var request = event.request;
+# 	request.uri = request.uri.replace(/^\/[^/]*\//, "/");
+# 	return request;
+# }
+# EOF
+# }
 
 output "burendo_handbook_cf_distro" {
   value = aws_cloudfront_distribution.handbook_distribution.domain_name
