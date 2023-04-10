@@ -30,7 +30,7 @@ git-hooks: ## Set up hooks in .githooks
 lambda-zip: ## Make zip file for lambda
 	@cd lambda && \
 	rm -rf verify_lambda/ && \
-	pip3 install --platform manylinux2014_x86_64 --implementation cp --no-cache-dir --python 3.9 --only-binary=:all: --upgrade --target verify_lambda cryptography==38.0.3 && \
+	pip3 install --platform manylinux2014_x86_64 --implementation cp --no-cache-dir --python 3.9 --only-binary=:all: --upgrade --target verify_lambda cryptography && \
 	pip3 install -r requirements.txt --no-cache-dir --target verify_lambda && \
 	cd verify_lambda && \
 	zip -9 -r verify.zip . && \
