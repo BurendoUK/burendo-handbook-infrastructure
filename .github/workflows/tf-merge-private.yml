@@ -188,9 +188,9 @@ jobs:
         working-directory: .
         continue-on-error: false
 
-      - name: "Rename Private Sidebars Config"
+      - name: "Rename Private Configuration"
         id: rename-private-config
-        run: mv sidebars.private.js sidebars.js
+        run: mv docusaurus.config.private.js docusaurus.config.js
         working-directory: ./burendo-handbook
         continue-on-error: false
 

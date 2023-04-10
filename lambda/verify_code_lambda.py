@@ -7,6 +7,13 @@ import datetime
 from http import cookies
 from urllib.parse import parse_qs
 
+# If logout path set expired cookie and re-direct to homepage and public origin
+# If code then verify, set cookie and private origin
+# If cookie header set, the private origin
+# Otherwise public origin
+
+cookie_key_name = "_burendo_handbook_session"
+
 def lambda_handler(event, context):
     print(json.dumps(event))
 
@@ -21,28 +28,78 @@ def lambda_handler(event, context):
     except:
         return redirect_unauthorised("Could not parse custom headers")
 
+    if is_logout_request(request):
+        return logout();
+    else if is_login_request(request):
+        return login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url)
+
+    return get_request(request, public_s3_bucket_name, private_s3_bucket_name)
+
+# Check if a login request
+def is_logout_request(request):
+    uri = request["uri"]
+    return "logout" in uri
+
+# Check if a login request
+def is_login_request(request):
     query_string = request["querystring"]
-    print("Query string returned as '" + query_string + "'")
     if not query_string:
-        return request
+        return False
     
     try:
         parsed_query_string = parse_qs(query_string)
         print("Query string parsed as '" + str(parsed_query_string) + "'")
     except:
-        return redirect_unauthorised("Could not parse query string")
+        return False
 
-    if "code" not in parsed_query_string:
-        print("Code not present in query string, passing request through")
-        return request
+    return "code" in parsed_query_string
 
+# Deal with login flow
+def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url):
+    print("Logging in")
+    query_string = request["querystring"]
+    parsed_query_string = parse_qs(query_string)
     code = parsed_query_string["code"][0]
-    print("Code parsed as '" + code + "'")
-
     token = generate_token(code, callback_url, client_id, cognito_domain_url)
     token_dict = token.json()
     print("Token returned as '" + str(token_dict) + "'")
     return validate_token(token_dict, client_id, cognito_jwks_url)
+
+# Deal with logout flow
+def logout():
+    print("Logging out")
+    cookie_value = generate_cookie_header_val("Thu, 01 Jan 1970 00:00:00 GMT", "")
+    return redirect_authorised(cookie_value)
+
+# Deal with standard get request flow
+def get_request(request, public_s3_bucket_name, private_s3_bucket_name):
+    if is_valid_cookie(request):
+        print("Valid cookie, re-directing to private bucket")
+        return set_origin_in_request(request, private_s3_bucket_name)
+    
+    print("No valid cookie present, re-directing to public bucket")
+    return set_origin_in_request(request, public_s3_bucket_name)
+
+# Return the session value from the cookie
+def is_valid_cookie():
+    headers = request["headers"]
+    if "cookie" not in headers:
+        print("Headers does not contain cookie")
+        return False
+    
+    cookie_array = headers["cookie"][0]["value"].split(" ")
+    for cookie in cookie_array:
+        if cookie_key_name in cookie:
+            print("Cookie found with name of '" + cookie_key_name + "'")
+            return True
+
+    print("Cookie not found with name of '" + cookie_key_name + "'")
+    return False
+
+# Return the session value from the cookie
+def set_origin_in_request(request, s3_bucket_name):
+    request["origin"]["s3"]["domainName"] = s3_bucket_name
+    return request
     
 # Convert authorisation code to a token
 def generate_token(code, callback_url, client_id, cognito_domain_url):
@@ -67,10 +124,10 @@ def validate_token(token, client_id, cognito_jwks_url):
 
     client_id_decoded = decoded_id_token["client_id"]
     if client_id_decoded != client_id:
-        redirect_unauthorised("Invalid id_token.  client_id value does not match expected")
+        return redirect_unauthorised("Invalid id_token.  client_id value does not match expected")
 
-    cookie_value = generate_cookie_header_val()
-    print("Cookie value set to '" + cookie_value + "'")
+    expiration = datetime.datetime.now() + datetime.timedelta(hours=6)
+    cookie_value = generate_cookie_header_val(expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT"), random.randint(0, 1000000000))
     return redirect_authorised(cookie_value)
 
 # Retrieve the public key used for decoding Cognito JWT
@@ -85,18 +142,19 @@ def get_public_key(access_token, cognito_jwks_url):
     return public_keys[kid]
 
 # Generate a cookie header value
-def generate_cookie_header_val():
+def generate_cookie_header_val(expiry_datetime, cookie_key_value):
     cookie = cookies.SimpleCookie()
-    cookie["session"] = random.randint(0, 1000000000)
-    expiration = datetime.datetime.now() + datetime.timedelta(days=1)
-    cookie["session"]["expires"] = expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-    cookie["session"]["path"] = "/"
-    cookie['session']['secure'] = True
-    cookie['session']['samesite'] = "None"
-    cookie['session']['domain'] = "handbook.burendo.com"
-    cookie['session']['max-age'] = str(60*60*24)
+    cookie[cookie_key_name] = cookie_key_value
+    cookie[cookie_key_name]["expires"] = expiry_datetime
+    cookie[cookie_key_name]["path"] = "/"
+    cookie[cookie_key_name]['secure'] = True
+    cookie[cookie_key_name]['samesite'] = "None"
+    cookie[cookie_key_name]['domain'] = "handbook.burendo.com"
+    cookie[cookie_key_name]['max-age'] = str(60*60*24)
     raw_cookie_output = cookie.output()
-    return raw_cookie_output.replace("Set-Cookie: ", "")
+    cookie_value = raw_cookie_output.replace("Set-Cookie: ", "")
+    print("Cookie value set to '" + cookie_value + "'")
+    return cookie_value
 
 # Redirect as unauthorised if not able to validate code and token
 def redirect_unauthorised(reason):

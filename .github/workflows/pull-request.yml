@@ -84,9 +84,9 @@ jobs:
         working-directory: .
         continue-on-error: false
 
-      - name: "Rename Public Sidebars Config"
+      - name: "Rename Public Configuration"
         id: rename-public-config
-        run: mv sidebars.public.js sidebars.js
+        run: mv docusaurus.config.public.js docusaurus.config.js
         working-directory: ./burendo-handbook
         continue-on-error: false
 
@@ -98,15 +98,15 @@ jobs:
         working-directory: ./burendo-handbook
         continue-on-error: false
 
-      - name: "Reset Sidebars Config"
+      - name: "Reset Configuration"
         id: reset-config
-        run: mv sidebars.js sidebars.public.js
+        run: mv docusaurus.config.js docusaurus.config.public.js
         working-directory: ./burendo-handbook
         continue-on-error: false
 
-      - name: "Rename Private Sidebars Config"
+      - name: "Rename Private Configuration"
         id: rename-private-config
-        run: mv sidebars.private.js sidebars.js
+        run: mv docusaurus.config.private.js docusaurus.config.js
         working-directory: ./burendo-handbook
         continue-on-error: false
 

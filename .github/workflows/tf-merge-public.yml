@@ -169,9 +169,9 @@ jobs:
         working-directory: .
         continue-on-error: false
 
-      - name: "Rename Public Sidebars Config"
+      - name: "Rename Public Configuration"
         id: rename-public-config
-        run: mv sidebars.public.js sidebars.js
+        run: mv docusaurus.config.public.js docusaurus.config.js
         working-directory: ./burendo-handbook
         continue-on-error: false
 
