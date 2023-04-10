@@ -12,7 +12,7 @@ from urllib.parse import parse_qs
 # If cookie header set, the private origin
 # Otherwise public origin
 
-cookie_key_name = "session"
+cookie_key_name = "_burendo_handbook_session"
 
 def lambda_handler(event, context):
     print(json.dumps(event))
