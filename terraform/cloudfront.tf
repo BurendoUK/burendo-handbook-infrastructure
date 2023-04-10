@@ -29,11 +29,11 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    lambda_function_association {
-      event_type   = "origin-request"
-      lambda_arn   = aws_lambda_function.verify_code_lambda.qualified_arn
-      include_body = true
-    }
+    # lambda_function_association {
+    #   event_type   = "origin-request"
+    #   lambda_arn   = aws_lambda_function.verify_code_lambda.qualified_arn
+    #   include_body = true
+    # }
   }
 
   restrictions {
