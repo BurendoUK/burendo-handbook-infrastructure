@@ -30,7 +30,7 @@ def lambda_handler(event, context):
 
     if is_logout_request(request):
         return logout();
-    else if is_login_request(request):
+    elif is_login_request(request):
         return login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url)
 
     return get_request(request, public_s3_bucket_name, private_s3_bucket_name)
@@ -81,12 +81,18 @@ def get_request(request, public_s3_bucket_name, private_s3_bucket_name):
     return set_origin_in_request(request, public_s3_bucket_name)
 
 # Return the session value from the cookie
-def is_valid_cookie():
+def is_valid_cookie(request):
     headers = request["headers"]
     if "cookie" not in headers:
         print("Headers does not contain cookie")
         return False
     
+    cookie_value = headers["cookie"][0]["value"]
+
+    if not cookie_value:
+        print("Cookie is empty")
+        return False
+
     cookie_array = headers["cookie"][0]["value"].split(" ")
     for cookie in cookie_array:
         if cookie_key_name in cookie:
