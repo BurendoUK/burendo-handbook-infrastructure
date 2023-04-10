@@ -12,7 +12,7 @@ from urllib.parse import parse_qs
 # If cookie header set, the private origin
 # Otherwise public origin
 
-cookie_key_name = "_burendo_handbook_session"
+cookie_key_name = "session"
 
 def lambda_handler(event, context):
     print(json.dumps(event))
@@ -105,6 +105,7 @@ def is_valid_cookie(request):
 # Return the session value from the cookie
 def set_origin_in_request(request, s3_bucket_name):
     request["origin"]["s3"]["domainName"] = s3_bucket_name
+    request["headers"]["host"] = [{'key': 'host', 'value': s3_bucket_name}]
     return request
     
 # Convert authorisation code to a token
