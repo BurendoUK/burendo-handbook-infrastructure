@@ -26,14 +26,22 @@ def lambda_handler(event, context):
         cognito_domain_url = request["origin"]["s3"]["customHeaders"]["cognito_domain_url"][0]["value"]
         cognito_jwks_url = request["origin"]["s3"]["customHeaders"]["cognito_jwks_url"][0]["value"]
     except:
-        return redirect_unauthorised("Could not parse custom headers")
+        return_object = redirect_unauthorised("Could not parse custom headers")
+        print (json.dumps(return_object))
+        return return_object
 
     if is_logout_request(request):
-        return logout();
+        return_object = logout();
+        print (json.dumps(return_object))
+        return return_object
     elif is_login_request(request):
-        return login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url)
+        return_object = login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url)
+        print (json.dumps(return_object))
+        return return_object
 
-    return get_request(request, public_s3_bucket_name, private_s3_bucket_name)
+    return_object = get_request(request, public_s3_bucket_name, private_s3_bucket_name)
+    print (json.dumps(return_object))
+    return return_object
 
 # Check if a login request
 def is_logout_request(request):
@@ -104,9 +112,10 @@ def is_valid_cookie(request):
 
 # Return the session value from the cookie
 def set_origin_in_request(request, s3_bucket_name):
-    request["origin"]["s3"]["domainName"] = s3_bucket_name
-    request["headers"]["host"] = [{'key': 'host', 'value': s3_bucket_name}]
-    return request
+    new_request = request
+    new_request["origin"]["s3"]["domainName"] = s3_bucket_name
+    new_request["headers"]["host"] = [{'key': 'host', 'value': s3_bucket_name}]
+    return new_request
     
 # Convert authorisation code to a token
 def generate_token(code, callback_url, client_id, cognito_domain_url):
