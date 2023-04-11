@@ -87,8 +87,7 @@ jobs:
       - name: "Move PRIVATE handbook content"
         id: private-content-copy
         run: |
-          mkdir -p burendo-handbook/docs/private
-          mv burendo-handbook-private/docs/* burendo-handbook/docs/private
+          mv -f burendo-handbook-private/docs/* burendo-handbook/docs
         working-directory: .
         continue-on-error: false
 

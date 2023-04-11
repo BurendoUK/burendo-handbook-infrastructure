@@ -31,11 +31,11 @@ def lambda_handler(event, context):
         return return_object
 
     if is_logout_request(request):
-        return_object = logout();
+        return_object = logout(request, public_s3_bucket_name);
         print (json.dumps(return_object))
         return return_object
     elif is_login_request(request):
-        return_object = login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url)
+        return_object = login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url, private_s3_bucket_name)
         print (json.dumps(return_object))
         return return_object
 
@@ -63,7 +63,7 @@ def is_login_request(request):
     return "code" in parsed_query_string
 
 # Deal with login flow
-def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url):
+def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url, private_s3_bucket_name):
     print("Logging in")
     query_string = request["querystring"]
     parsed_query_string = parse_qs(query_string)
@@ -71,13 +71,14 @@ def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url
     token = generate_token(code, callback_url, client_id, cognito_domain_url)
     token_dict = token.json()
     print("Token returned as '" + str(token_dict) + "'")
-    return validate_token(token_dict, client_id, cognito_jwks_url)
+    return validate_token(request, token_dict, client_id, cognito_jwks_url, private_s3_bucket_name)
 
 # Deal with logout flow
-def logout():
+def logout(request, public_s3_bucket_name):
     print("Logging out")
     cookie_value = generate_cookie_header_val("Thu, 01 Jan 1970 00:00:00 GMT", "")
-    return redirect_authorised(cookie_value)
+    new_request = set_origin_in_request(request, public_s3_bucket_name)
+    return add_set_cookie_header_and_redirect_to_homepage(new_request, cookie_value)
 
 # Deal with standard get request flow
 def get_request(request, public_s3_bucket_name, private_s3_bucket_name):
@@ -87,6 +88,23 @@ def get_request(request, public_s3_bucket_name, private_s3_bucket_name):
     
     print("No valid cookie present, re-directing to public bucket")
     return set_origin_in_request(request, public_s3_bucket_name)
+
+# If authorised, redirect to homepage with set-cookie
+def add_set_cookie_header_and_redirect_to_homepage(request, cookie_value):
+    new_request = request
+    new_request["headers"]["set-cookie"] = [
+        {
+            'key': 'Set-Cookie',
+            'value': cookie_value
+        }
+    ]
+    new_request["headers"]["location"] = [
+        {
+            'key': 'Location',
+            'value': 'https://handbook.burendo.com/'
+        },
+    ]
+    return new_request
 
 # Return the session value from the cookie
 def is_valid_cookie(request):
@@ -131,7 +149,7 @@ def generate_token(code, callback_url, client_id, cognito_domain_url):
     return requests.post(token_endpoint_url, data=payload)
 
 # Validate the returned token
-def validate_token(token, client_id, cognito_jwks_url):
+def validate_token(request, token, client_id, cognito_jwks_url, private_s3_bucket_name):
     id_token = token["id_token"]
     access_token = token["access_token"]
     public_key_for_decoding = get_public_key(access_token, cognito_jwks_url)
@@ -144,7 +162,10 @@ def validate_token(token, client_id, cognito_jwks_url):
 
     expiration = datetime.datetime.now() + datetime.timedelta(hours=6)
     cookie_value = generate_cookie_header_val(expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT"), random.randint(0, 1000000000))
-    return redirect_authorised(cookie_value)
+
+    new_request = set_origin_in_request(request, private_s3_bucket_name)
+    new_request["querystring"] = ""
+    return add_set_cookie_header_and_redirect_to_homepage(new_request, cookie_value)
 
 # Retrieve the public key used for decoding Cognito JWT
 def get_public_key(access_token, cognito_jwks_url):
@@ -177,25 +198,4 @@ def redirect_unauthorised(reason):
     return {
         "status": "401",
         "body": json.dumps({"message": reason})
-    }
-
-# If authorised, redirect to homepage with set-cookie
-def redirect_authorised(cookie_value):
-    return {
-        'status': '302',
-        'statusDescription': 'User logged in successfully',
-        'headers': {
-            'location': [
-                {
-                    'key': 'Location',
-                    'value': 'https://handbook.burendo.com/'
-                },
-            ],
-            'set-cookie': [
-                {
-                    'key': 'Set-Cookie',
-                    'value': cookie_value
-                }
-            ]
-        }
     }
