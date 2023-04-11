@@ -79,7 +79,8 @@ jobs:
       - name: "Move PRIVATE handbook content"
         id: private-content-copy
         run: |
-          mv -f burendo-handbook-private/docs/* burendo-handbook/docs
+          cp -r burendo-handbook-private/docs/* burendo-handbook/docs
+          rm -r burendo-handbook-private/docs/
         working-directory: .
         continue-on-error: false
 
