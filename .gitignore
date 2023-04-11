@@ -36,7 +36,7 @@ burendo-handbook-public/*
 **/.tox
 **/venv
 **/package
-**/verify_lambda
+**/verify_lambda_build/verify_lambda
 **/lambda.zip
 **/__pycache__
 **/*.zip

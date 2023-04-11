@@ -28,14 +28,9 @@ git-hooks: ## Set up hooks in .githooks
 
 .PHONY: lambda-zip
 lambda-zip: ## Make zip file for lambda
-	@cd lambda && \
-	rm -rf verify_lambda/ && \
-	pip3 install --platform manylinux2014_x86_64 --implementation cp --no-cache-dir --python 3.9 --only-binary=:all: --upgrade --target verify_lambda cryptography && \
-	pip3 install -r requirements.txt --no-cache-dir --target verify_lambda && \
-	cd verify_lambda && \
-	zip -9 -r verify.zip . && \
-	cd ../ && \
-	zip -9 -r verify_lambda/verify.zip verify_code_lambda.py
+	@cd lambda/verify_lambda_build && \
+	./build_verify_lambda.sh && \
+	cd ../../
 	
 .PHONY: handbook-local-public
 handbook-local: ## Run handbook locally
