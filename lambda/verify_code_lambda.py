@@ -87,6 +87,7 @@ def logout(request, public_s3_bucket_name):
     print("Logging out")
     cookie_value = generate_cookie_header_val("Thu, 01 Jan 1970 00:00:00 GMT", "")
     new_request = set_origin_in_request(request, public_s3_bucket_name)
+    new_request["querystring"] = ""
     return add_set_cookie_header_and_redirect_to_homepage(new_request, cookie_value)
 
 # Deal with standard get request flow
