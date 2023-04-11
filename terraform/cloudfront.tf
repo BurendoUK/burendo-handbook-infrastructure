@@ -96,18 +96,6 @@ resource "aws_cloudfront_cache_policy" "handbook_distribution_cache_policy" {
   }
 }
 
-# resource "aws_cloudfront_function" "switch_origin" {
-# 	name    = "rewrite-request-${random_id.id.hex}"
-# 	runtime = "cloudfront-js-1.0"
-# 	code    = <<EOF
-# function handler(event) {
-# 	var request = event.request;
-# 	request.uri = request.uri.replace(/^\/[^/]*\//, "/");
-# 	return request;
-# }
-# EOF
-# }
-
 output "burendo_handbook_cf_distro" {
   value = aws_cloudfront_distribution.handbook_distribution.domain_name
 }
