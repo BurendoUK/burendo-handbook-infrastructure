@@ -45,8 +45,17 @@ def lambda_handler(event, context):
 
 # Check if a login request
 def is_logout_request(request):
-    uri = request["uri"]
-    return "logout" in uri
+    query_string = request["querystring"]
+    if not query_string:
+        return False
+    
+    try:
+        parsed_query_string = parse_qs(query_string)
+        print("Query string parsed as '" + str(parsed_query_string) + "'")
+    except:
+        return False
+
+    return "logout" in parsed_query_string
 
 # Check if a login request
 def is_login_request(request):

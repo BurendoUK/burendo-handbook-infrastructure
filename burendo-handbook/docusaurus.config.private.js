@@ -90,7 +90,7 @@ const config = {
             position: "right",
           },
           {
-            to: "logout",
+            href: "https://handbook.burendo.com/?logout=true",
             label: 'Logout',
             position: 'right',
             target: "_self",
