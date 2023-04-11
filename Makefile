@@ -29,14 +29,24 @@ git-hooks: ## Set up hooks in .githooks
 .PHONY: lambda-zip
 lambda-zip: ## Make zip file for lambda
 	@cd lambda && \
-	zip -9 auth.zip auth_lambda.py && \
-	pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target decode cryptography && \
-	pip3 install -r requirements.txt --target decode && \
-	pip3 install requests jwt --target decode && \
-	zip -9 -r decode.zip decode
+	rm -rf verify_lambda/ && \
+	pip3 install --platform manylinux2014_x86_64 --implementation cp --no-cache-dir --python 3.9 --only-binary=:all: --upgrade --target verify_lambda cryptography && \
+	pip3 install -r requirements.txt --no-cache-dir --target verify_lambda && \
+	cd verify_lambda && \
+	zip -9 -r verify.zip . && \
+	cd ../ && \
+	zip -9 -r verify_lambda/verify.zip verify_code_lambda.py
 	
-.PHONY: handbook-local
+.PHONY: handbook-local-public
 handbook-local: ## Run handbook locally
 	@cd burendo-handbook && \
+	mv docusaurus.config.public.js docusaurus.config.js
+	npm install && \
+	npm run-script docusaurus start
+	
+.PHONY: handbook-local-private
+handbook-local: ## Run handbook locally
+	@cd burendo-handbook && \
+	mv docusaurus.config.private.js docusaurus.config.js
 	npm install && \
 	npm run-script docusaurus start

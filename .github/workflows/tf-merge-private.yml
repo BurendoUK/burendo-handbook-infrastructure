@@ -188,9 +188,9 @@ jobs:
         working-directory: .
         continue-on-error: false
 
-      - name: "Rename Private Sidebars Config"
+      - name: "Rename Private Configuration"
         id: rename-private-config
-        run: mv sidebars.private.js sidebars.js
+        run: mv docusaurus.config.private.js docusaurus.config.js
         working-directory: ./burendo-handbook
         continue-on-error: false
 
@@ -202,7 +202,7 @@ jobs:
         working-directory: ./burendo-handbook
         continue-on-error: false
 
-      - name: "Copy build output to S3"
+      - name: "Copy build output to PRIVATE S3"
         id: copy-to-s3
         run: aws s3 sync build s3://${BUCKET_SUFFIX} --delete
         working-directory: burendo-handbook

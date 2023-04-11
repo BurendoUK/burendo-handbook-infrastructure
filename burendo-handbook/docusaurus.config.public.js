@@ -44,7 +44,7 @@ const config = {
       ({
         docs: {
           routeBasePath: "/",
-          sidebarPath: require.resolve("./sidebars.js"),
+          sidebarPath: require.resolve("./sidebars.public.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl:
@@ -93,6 +93,7 @@ const config = {
             href: process.env.BURENDO_LOGIN_URL,
             label: 'Login',
             position: 'right',
+            target: "_self",
           },
           {
             to: 'blog', 

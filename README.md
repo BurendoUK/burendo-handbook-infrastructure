@@ -17,11 +17,11 @@ Each set of content is saved to a separate S3 bucket so that the private content
 ### Running locally
 
 Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs.
-Then `make handbook-local`
+Then `make handbook-local-public` to use the public content and sidebars or `make-handbook-private` to run with private and public content and sidebars. Running these creates local build files and a local `sidebars.js` file that is git ignored.
 
-## Menus
+## Configuration files
 
-There are two menu files - one for the public version of the handbook and one for the private. The github workflows rename the relevant file to `sidebars.js` and then build the handbook. The PR workflows test both menu configurations build successfully and for merging there are workflows for public and private separately.
+There are two menu files - one for the public version of the handbook and one for the private. There are also two `docusaurus.config.js` files, one for public and one for private - each one references the relevant sidebars file. The github workflows rename the relevant docusaurus top level configuration file to `docusaurus.config.js` and then builds the handbook. The PR workflows test both configurations build successfully and for merging there are workflows for public and private separately.
 
 ### Private menu
 

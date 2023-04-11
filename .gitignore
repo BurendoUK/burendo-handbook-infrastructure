@@ -19,6 +19,7 @@
 **/terraform.tf
 **/locals.tf
 **/variables.tf
+burendo-handbook/docusaurus.config.js
 
 **/burendo-handbook/docs/*
 **/burendo-handbook-public/*
@@ -32,9 +33,10 @@ burendo-handbook-public/*
 
 # python
 
+**/.tox
 **/venv
 **/package
-**/decode
+**/verify_lambda
 **/lambda.zip
 **/__pycache__
 **/*.zip
