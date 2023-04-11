@@ -201,7 +201,7 @@ jobs:
   build-private-handbook:
     name: "Build Private Handbook content"
     runs-on: ubuntu-latest
-    needs: deploy-infra
+    needs: build-public-handbook
     steps:
       - uses: actions/checkout@v2
 
