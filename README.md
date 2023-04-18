@@ -27,22 +27,28 @@ There are two menu files - one for the public version of the handbook and one fo
 
 The private menu file ([sidebars.private.js](burendo-handbook/sidebars.private.js)) contains a second menu which has the `private` folder. This is where the private content goes and the menus are then spliced together when logged in.
 
-## The Lambda
+## The Verify Code Lambda
 
-This AWS Lambda function is a serverless function designed to perform a validation of JSON Web Tokens (JWT) obtained from the Burendo owned Amazon Cognito user pool. The function first checks if the Authorization header is present in the request. If not, it returns a 401 HTTP response with an error message. If the Authorization header is present, the function extracts the access token from the header and retrieves the JSON Web Key Set (JWKS) for the user pool. The function then verifies the signature of the access token using the public key obtained from the JWKS.
+This lambda controls our access process. It logs in using the following process:
 
-The function also checks the claims in the JWT, including the issuer, the audience, the token use, and the expiration time. If any of the checks fail, the function returns a 401 HTTP response with an error message. If all the checks pass, the function returns a 200 HTTP response with a success message.
+1. When clicking Login, AWS Cognito is called and returns a `code`
+1. The lambda takes this code and uses it to get an `access token` from Cognito
+1. The token is verified but decoding it using AWS and checking the values
 
-This function is useful for protecting resources in a serverless architecture using Amazon Cognito for user authentication and authorization. It ensures that only authenticated and authorized users can access protected resources.
+Login is controlled via a cookie that allows access for 8 hours. Logging out again will clear this cookie.
+
+When any request comes in for a page, the lambda checks if the cookie is present and valid. If it is, then the user is redirected to the private handbook. If the user is not verified they are redirected to the public handbook. It may be that the page is therefore not present and they would then get a 404.
+
+You can tell if you are logged in or out by the "Login" or "Logout" menu option.
 
 ### Running "locally (AWS)"
 
 This is an arm64 lambda and the below dependencies are compiled for arm64. Cryptography is compiled for arm64 using the following steps:
 1. For VSCode use the `.devcontainer` in the root of the repo to build the lambda: `Shift + CMD + P` and _Choose Reopen in container_
-2. From the `lambda/` folder, install cryptography using the following command: `pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography`
-3. Install the below dependencies using the following command: `pip3 install -r requirements.txt --target ./package`
-4. Copy the `lambda_function.py` file to the package folder
-5. Zip the package folder and upload it to the lambda function
+1. From the `lambda/verify_build_lambda` folder, install cryptography using the following command: `pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography`
+1. Install the below dependencies using the following command: `pip3 install -r requirements.txt --target ./package`
+1. Copy the `lambda_function.py` file to the package folder
+1. Zip the package folder and upload it to the lambda function
 
 The upload to AWS can be done, either via the console or using Terraform.
 

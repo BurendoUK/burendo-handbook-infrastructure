@@ -13,6 +13,54 @@ from urllib.parse import parse_qs
 # Otherwise public origin
 
 cookie_key_name = "_burendo_handbook_session"
+cookie_domain = "handbook.burendo.com"
+cookie_path = "/"
+
+LOGIN_SUCCESSFUL_CONTENT = """
+<html lang="en">
+<head>
+    <style>
+    body {
+        color: white;    
+        background-color: black;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 20px;
+        text-align: center;
+    }
+    </style>
+    <meta charset="utf-8">
+    <title>Burendo Handbook Login Successful</title>
+</head>
+<body style="text-align:center">
+    <p><img src="https://handbook.burendo.com/img/burendo_outline.png" alt="Burendo logo" height="10%">
+    <p>You have successfully <strong>logged in</strong> to the Burendo Handbook!</p>
+    <p>Click <a href="https://handbook.burendo.com">here</a> to go back to the Home Page.</p>
+</body>
+</html>
+"""
+
+LOGOUT_SUCCESSFUL_CONTENT = """
+<html lang="en">
+<head>
+    <style>
+    body {
+        color: white;    
+        background-color: black;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 20px;
+        text-align: center;
+    }
+    </style>
+    <meta charset="utf-8">
+    <title>Burendo Handbook Logout Successful</title>
+</head>
+<body style="text-align:center">
+    <p><img src="https://handbook.burendo.com/img/burendo_outline.png" alt="Burendo logo" height="10%">
+    <p>You have successfully <strong>logged out</strong> of the Burendo Handbook!</p>
+    <p>Click <a href="https://handbook.burendo.com">here</a> to go back to the Home Page.</p>
+</body>
+</html>
+"""
 
 def lambda_handler(event, context):
     print(json.dumps(event))
@@ -51,7 +99,7 @@ def is_logout_request(request):
     
     try:
         parsed_query_string = parse_qs(query_string)
-        print("Query string parsed as '" + str(parsed_query_string) + "'")
+        print("Query string parsed as to check logout '" + str(parsed_query_string) + "'")
     except:
         return False
 
@@ -65,7 +113,7 @@ def is_login_request(request):
     
     try:
         parsed_query_string = parse_qs(query_string)
-        print("Query string parsed as '" + str(parsed_query_string) + "'")
+        print("Query string parsed as to check code '" + str(parsed_query_string) + "'")
     except:
         return False
 
@@ -80,15 +128,16 @@ def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url
     token = generate_token(code, callback_url, client_id, cognito_domain_url)
     token_dict = token.json()
     print("Token returned as '" + str(token_dict) + "'")
-    return validate_token(request, token_dict, client_id, cognito_jwks_url, private_s3_bucket_name)
+    cookie_value_validated = validate_token(request, token_dict, client_id, cognito_jwks_url, private_s3_bucket_name)
+    return redirect_authorised(cookie_value_validated, LOGIN_SUCCESSFUL_CONTENT)
 
 # Deal with logout flow
 def logout(request, public_s3_bucket_name):
     print("Logging out")
-    cookie_value = generate_cookie_header_val("Thu, 01 Jan 1970 00:00:00 GMT", "")
-    new_request = set_origin_in_request(request, public_s3_bucket_name)
-    new_request["querystring"] = ""
-    return add_set_cookie_header_and_redirect_to_homepage(new_request, cookie_value)
+    expiration = "Thu, 01 Jan 1970 00:00:00 GMT"
+    cookie = f"{cookie_key_name}=; Domain={cookie_domain}; expires={expiration}; Path={cookie_path}"
+    cookie_value = generate_cookie_header_val(cookie)
+    return redirect_authorised(cookie_value, LOGOUT_SUCCESSFUL_CONTENT)
 
 # Deal with standard get request flow
 def get_request(request, public_s3_bucket_name, private_s3_bucket_name):
@@ -98,23 +147,6 @@ def get_request(request, public_s3_bucket_name, private_s3_bucket_name):
     
     print("No valid cookie present, re-directing to public bucket")
     return set_origin_in_request(request, public_s3_bucket_name)
-
-# If authorised, redirect to homepage with set-cookie
-def add_set_cookie_header_and_redirect_to_homepage(request, cookie_value):
-    new_request = request
-    new_request["headers"]["set-cookie"] = [
-        {
-            'key': 'Set-Cookie',
-            'value': cookie_value
-        }
-    ]
-    new_request["headers"]["location"] = [
-        {
-            'key': 'Location',
-            'value': 'https://handbook.burendo.com/'
-        },
-    ]
-    return new_request
 
 # Return the session value from the cookie
 def is_valid_cookie(request):
@@ -160,7 +192,6 @@ def generate_token(code, callback_url, client_id, cognito_domain_url):
 
 # Validate the returned token
 def validate_token(request, token, client_id, cognito_jwks_url, private_s3_bucket_name):
-    id_token = token["id_token"]
     access_token = token["access_token"]
     public_key_for_decoding = get_public_key(access_token, cognito_jwks_url)
     decoded_id_token = jwt.decode(access_token, key=public_key_for_decoding, algorithms=['RS256'])
@@ -170,12 +201,12 @@ def validate_token(request, token, client_id, cognito_jwks_url, private_s3_bucke
     if client_id_decoded != client_id:
         return redirect_unauthorised("Invalid id_token.  client_id value does not match expected")
 
-    expiration = datetime.datetime.now() + datetime.timedelta(hours=6)
-    cookie_value = generate_cookie_header_val(expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT"), random.randint(0, 1000000000))
-
-    new_request = set_origin_in_request(request, private_s3_bucket_name)
-    new_request["querystring"] = ""
-    return add_set_cookie_header_and_redirect_to_homepage(new_request, cookie_value)
+    expiration = (datetime.datetime.now() + datetime.timedelta(hours=6)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+    max_age = str(60*60*8) # 8 hours
+    value = str(random.randint(0, 1000000000))
+    cookie = f"{cookie_key_name}={value}; Domain={cookie_domain}; expires={expiration}; Max-Age={max_age}; Path={cookie_path}; SameSite=None; Secure"
+    cookie_value = generate_cookie_header_val(cookie)
+    return cookie_value
 
 # Retrieve the public key used for decoding Cognito JWT
 def get_public_key(access_token, cognito_jwks_url):
@@ -189,15 +220,9 @@ def get_public_key(access_token, cognito_jwks_url):
     return public_keys[kid]
 
 # Generate a cookie header value
-def generate_cookie_header_val(expiry_datetime, cookie_key_value):
+def generate_cookie_header_val(cookie_raw_value):
     cookie = cookies.SimpleCookie()
-    cookie[cookie_key_name] = cookie_key_value
-    cookie[cookie_key_name]["expires"] = expiry_datetime
-    cookie[cookie_key_name]["path"] = "/"
-    cookie[cookie_key_name]['secure'] = True
-    cookie[cookie_key_name]['samesite'] = "None"
-    cookie[cookie_key_name]['domain'] = "handbook.burendo.com"
-    cookie[cookie_key_name]['max-age'] = str(60*60*24)
+    cookie.load(cookie_raw_value)
     raw_cookie_output = cookie.output()
     cookie_value = raw_cookie_output.replace("Set-Cookie: ", "")
     print("Cookie value set to '" + cookie_value + "'")
@@ -208,4 +233,26 @@ def redirect_unauthorised(reason):
     return {
         "status": "401",
         "body": json.dumps({"message": reason})
+    }
+
+# Redirect as logged in or out to set cookies
+def redirect_authorised(cookie_value, body_content):
+    return {
+        'status': '200',
+        'statusDescription': 'OK',
+        'headers': {
+            'set-cookie': [
+                {
+                    'key': 'Set-Cookie',
+                    'value': cookie_value
+                }
+            ],
+            "content-type": [
+                {
+                    'key': 'Content-Type',
+                    'value': 'text/html'
+                }
+            ]
+        },
+        'body': body_content
     }
