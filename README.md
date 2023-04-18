@@ -45,7 +45,7 @@ You can tell if you are logged in or out by the "Login" or "Logout" menu option.
 
 This is an arm64 lambda and the below dependencies are compiled for arm64. Cryptography is compiled for arm64 using the following steps:
 1. For VSCode use the `.devcontainer` in the root of the repo to build the lambda: `Shift + CMD + P` and _Choose Reopen in container_
-1. From the `lambda/` folder, install cryptography using the following command: `pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography`
+1. From the `lambda/verify_build_lambda` folder, install cryptography using the following command: `pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade --target ./package cryptography`
 1. Install the below dependencies using the following command: `pip3 install -r requirements.txt --target ./package`
 1. Copy the `lambda_function.py` file to the package folder
 1. Zip the package folder and upload it to the lambda function
