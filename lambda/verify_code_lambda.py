@@ -83,7 +83,7 @@ def lambda_handler(event, context):
         print (json.dumps(return_object))
         return return_object
     elif is_login_request(request):
-        return_object = login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url, private_s3_bucket_name)
+        return_object = login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url)
         print (json.dumps(return_object))
         return return_object
 
@@ -93,34 +93,33 @@ def lambda_handler(event, context):
 
 # Check if a login request
 def is_logout_request(request):
-    query_string = request["querystring"]
-    if not query_string:
-        return False
-    
-    try:
-        parsed_query_string = parse_qs(query_string)
-        print("Query string parsed as to check logout '" + str(parsed_query_string) + "'")
-    except:
-        return False
-
-    return "logout" in parsed_query_string
+    return check_value_in_query_string(request, "logout")
 
 # Check if a login request
 def is_login_request(request):
+    return check_value_in_query_string(request, "code")
+
+# Checks is a given value is in the query string
+def check_value_in_query_string(request, field_value):
+    if "querystring" not in request:
+        print("Query string not present")
+        return False
+
     query_string = request["querystring"]
     if not query_string:
+        print("Query string empty")
         return False
     
     try:
         parsed_query_string = parse_qs(query_string)
-        print("Query string parsed as to check code '" + str(parsed_query_string) + "'")
+        print("Query string parsed as '" + str(parsed_query_string) + "' to look for '" + field_value + "'")
     except:
         return False
 
-    return "code" in parsed_query_string
+    return field_value in parsed_query_string
 
 # Deal with login flow
-def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url, private_s3_bucket_name):
+def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url):
     print("Logging in")
     query_string = request["querystring"]
     parsed_query_string = parse_qs(query_string)
@@ -128,7 +127,7 @@ def login(request, callback_url, client_id, cognito_domain_url, cognito_jwks_url
     token = generate_token(code, callback_url, client_id, cognito_domain_url)
     token_dict = token.json()
     print("Token returned as '" + str(token_dict) + "'")
-    cookie_value_validated = validate_token(request, token_dict, client_id, cognito_jwks_url, private_s3_bucket_name)
+    cookie_value_validated = validate_token(token_dict, client_id, cognito_jwks_url)
     return redirect_authorised(cookie_value_validated, LOGIN_SUCCESSFUL_CONTENT)
 
 # Deal with logout flow
@@ -191,7 +190,7 @@ def generate_token(code, callback_url, client_id, cognito_domain_url):
     return requests.post(token_endpoint_url, data=payload)
 
 # Validate the returned token
-def validate_token(request, token, client_id, cognito_jwks_url, private_s3_bucket_name):
+def validate_token(token, client_id, cognito_jwks_url):
     access_token = token["access_token"]
     public_key_for_decoding = get_public_key(access_token, cognito_jwks_url)
     decoded_id_token = jwt.decode(access_token, key=public_key_for_decoding, algorithms=['RS256'])
@@ -201,23 +200,38 @@ def validate_token(request, token, client_id, cognito_jwks_url, private_s3_bucke
     if client_id_decoded != client_id:
         return redirect_unauthorised("Invalid id_token.  client_id value does not match expected")
 
-    expiration = (datetime.datetime.now() + datetime.timedelta(hours=6)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+    expiration = get_cookie_expiration_date()
     max_age = str(60*60*8) # 8 hours
-    value = str(random.randint(0, 1000000000))
+    value = get_cookie_value()
     cookie = f"{cookie_key_name}={value}; Domain={cookie_domain}; expires={expiration}; Max-Age={max_age}; Path={cookie_path}; SameSite=None; Secure"
     cookie_value = generate_cookie_header_val(cookie)
     return cookie_value
 
+# Return the cookie expiration
+def get_cookie_expiration_date():
+    return (datetime.datetime.now() + datetime.timedelta(hours=6)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+
+# Return the cookie value
+def get_cookie_value():
+    return str(random.randint(0, 1000000000))
+
 # Retrieve the public key used for decoding Cognito JWT
 def get_public_key(access_token, cognito_jwks_url):
-    jwks_json = requests.get(cognito_jwks_url)
-    jwks = jwks_json.json()
+    jwks = get_jwks_request(cognito_jwks_url)
     public_keys = {}
     for jwk in jwks['keys']:
         kid = jwk['kid']
-        public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
+        public_keys[kid] = get_jwk_public_key(jwk)
     kid = jwt.get_unverified_header(access_token)['kid']
     return public_keys[kid]
+
+# Return the dumped public key
+def get_jwks_request(cognito_jwks_url):
+    return requests.get(cognito_jwks_url).json()
+
+# Return the dumped public key
+def get_jwk_public_key(jwk):
+    return jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
 
 # Generate a cookie header value
 def generate_cookie_header_val(cookie_raw_value):

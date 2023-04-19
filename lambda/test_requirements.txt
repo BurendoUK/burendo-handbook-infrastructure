@@ -1,0 +1,6 @@
+# Requirements file for the unit tests for the lambdas = local running needs more packages than AWS as AWS includes package already
+
+pyjwt>=2.1.0
+requests>=2.26.0
+boto3
+cryptography
