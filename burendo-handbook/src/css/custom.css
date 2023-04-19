@@ -19,7 +19,7 @@
 
 /* Highlight private content */
 .private-content {
-  border-color: yellowgreen;
+  --ifm-menu-color: darkolivegreen;
   font-style: italic;
 }
 
@@ -37,7 +37,7 @@
 
 /* Private content in dark mode */
 [data-theme='dark'] .private-content {
-  border-color: yellow;
+  border-color: mediumaquamarine;
 }
 
 /* In mobile view, hide the search and name */
@@ -46,7 +46,7 @@
     display: none;
   }
   b.navbar__items.text--truncate > * {
-    display: none;
+    visibility: hidden;
   }
 }
 
