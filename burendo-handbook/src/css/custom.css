@@ -6,6 +6,15 @@
 
 /* You can override the default Infima variables here. */
 :root {
+  --burendo-red: #EF5974;
+  --burendo-pink: #E1539D;
+  --burendo-purple: #8C4189;
+  --burendo-light-blue: #28A0DD;
+  --burendo-green: #D1D146;
+  --burendo-blue: #0753AD;
+  --burendo-warm-grey: #808080;
+  --burendo-dark-blue: #06325E;
+  --burendo-font-family: arial;
   --ifm-color-primary: #2e8555;
   --ifm-color-primary-dark: #29784c;
   --ifm-color-primary-darker: #277148;
@@ -13,7 +22,14 @@
   --ifm-color-primary-light: #33925d;
   --ifm-color-primary-lighter: #359962;
   --ifm-color-primary-lightest: #3cad6e;
+  --ifm-footer-background-color: var(--burendo-purple);
+  --ifm-footer-link-hover-color: var(--burendo-blue);
+  --ifm-navbar-background-color: var(--burendo-green);
+  --ifm-navbar-link-hover-color: var(--burendo-blue);
+  --ifm-breadcrumb-color-active: var(--burendo-blue);
+  --ifm-link-color: var(--burendo-blue);
   --ifm-code-font-size: 95%;
+  --ifm-font-family-base: var(--burendo-font-family);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
@@ -33,11 +49,36 @@
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-footer-link-hover-color: var(--burendo-light-blue);
+  --ifm-navbar-background-color: var(--burendo-dark-blue);
+  --ifm-navbar-link-hover-color: var(--burendo-light-blue);
+  --ifm-breadcrumb-color-active: var(--burendo-light-blue);
+  --ifm-link-color: var(--burendo-light-blue);
 }
 
 /* Private content in dark mode */
 [data-theme='dark'] .private-content {
   border-color: mediumaquamarine;
+}
+
+/* Sidebar menu selected link (dark mode) */
+[data-theme='dark'] .menu__link.menu__link--active {
+  color: var(--burendo-light-blue);
+}
+
+/* Sidebar menu selected link (light mode) */
+[data-theme='light'] .menu__link.menu__link--active {
+  color: var(--burendo-blue);
+}
+
+/* Table of contents selected link (dark mode) */
+[data-theme='dark'] .table-of-contents__link--active {
+  color: var(--burendo-light-blue);
+}
+
+/* Table of contents selected link (light mode) */
+[data-theme='light'] .table-of-contents__link--active {
+  color: var(--burendo-blue);
 }
 
 /* In mobile view, hide the search and name */
