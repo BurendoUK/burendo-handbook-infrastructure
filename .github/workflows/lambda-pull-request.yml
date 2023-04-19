@@ -22,6 +22,6 @@ jobs:
         run: pip install tox
         working-directory: lambda
 
-      # - name: Run unit tests
-      #   run: tox
-      #   working-directory: lambda
+      - name: Run unit tests
+        run: tox
+        working-directory: lambda
