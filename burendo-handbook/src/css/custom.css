@@ -40,13 +40,6 @@
   border-color: yellow;
 }
 
-/* In mobile view, hide the search */
-@media (max-width: 996px) {
-  div.searchBox_ZlJk > * {
-    display: none;
-  }
-}
-
 /* In mobile view, hide the search and name */
 @media (max-width: 996px) {
   div.searchBox_ZlJk > * {
