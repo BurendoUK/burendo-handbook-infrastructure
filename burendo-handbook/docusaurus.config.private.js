@@ -85,11 +85,6 @@ const config = {
         },
         items: [
           {
-            href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
-            label: "GitHub Repo",
-            position: "right",
-          },
-          {
             href: "https://handbook.burendo.com/?logout=true",
             label: 'Logout',
             position: 'right',
@@ -128,6 +123,10 @@ const config = {
               {
                 label: "GitHub Org",
                 href: "https://github.com/BurendoUK",
+              },
+              {
+                label: "GitHub Repo",
+                href: "https://github.com/BurendoUK/burendo-handbook-infrastructure",
               },
             ],
           },
