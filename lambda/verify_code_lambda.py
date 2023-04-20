@@ -31,7 +31,7 @@ LOGIN_SUCCESSFUL_CONTENT = """
     <title>Burendo Handbook Login Successful</title>
 </head>
 <body style="text-align:center">
-    <p><img src="https://handbook.burendo.com/img/burendo_outline.png" alt="Burendo logo" height="10%">
+    <p><img src="https://handbook.burendo.com/img/burendo_logo.png" alt="Burendo logo" height="10%">
     <p>You have successfully <strong>logged in</strong> to the Burendo Handbook!</p>
     <p>Click <a href="https://handbook.burendo.com">here</a> to go back to the Home Page.</p>
 </body>
@@ -54,7 +54,7 @@ LOGOUT_SUCCESSFUL_CONTENT = """
     <title>Burendo Handbook Logout Successful</title>
 </head>
 <body style="text-align:center">
-    <p><img src="https://handbook.burendo.com/img/burendo_outline.png" alt="Burendo logo" height="10%">
+    <p><img src="https://handbook.burendo.com/img/burendo_logo.png" alt="Burendo logo" height="10%">
     <p>You have successfully <strong>logged out</strong> of the Burendo Handbook!</p>
     <p>Click <a href="https://handbook.burendo.com">here</a> to go back to the Home Page.</p>
 </body>
