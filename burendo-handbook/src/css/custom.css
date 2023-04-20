@@ -85,6 +85,18 @@
   color: var(--burendo-blue);
 }
 
+/* Navbar logo (dark mode) */
+[data-theme='dark'] .navbar__logo {
+  background-color: var(--ifm-background-surface-color);
+  border-style: ridge;
+}
+
+/* Navbar logo (light mode) */
+[data-theme='light'] .navbar__logo {
+  background-color: var(--ifm-background-surface-color);
+  border-style: ridge;
+}
+
 /* In mobile view, hide the search and name */
 @media (max-width: 996px) {
   div.searchBox_ZlJk > * {

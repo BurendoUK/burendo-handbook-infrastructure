@@ -1,5 +1,4 @@
 import json
-import boto3
 import requests
 import jwt
 import random
