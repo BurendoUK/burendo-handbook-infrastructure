@@ -14,7 +14,7 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/burendo_outline.png",
+  favicon: "img/burendo_logo.png",
   plugins: [
     [
       require.resolve("@cmfcmf/docusaurus-search-local"),
@@ -70,7 +70,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/burendo_outline.png',
+      image: 'img/burendo_logo.png',
       colorMode: {
         defaultMode: 'dark',
         disableSwitch: false,
@@ -81,7 +81,7 @@ const config = {
         title: "The Burendo Handbook",
         logo: {
           alt: "Burendo Logo",
-          src: "img/burendo_outline.png",
+          src: "img/burendo_logo.png",
         },
         items: [
           {
