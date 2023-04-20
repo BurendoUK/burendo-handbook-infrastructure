@@ -33,6 +33,11 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
       lambda_arn   = aws_lambda_function.verify_code_lambda.qualified_arn
       include_body = true
     }
+
+    function_association {
+      event_type   = "viewer-response"
+      function_arn = aws_cloudfront_function.add_cache_control_header.arn
+    }
   }
 
   restrictions {
@@ -100,6 +105,14 @@ resource "aws_cloudfront_cache_policy" "handbook_distribution_cache_policy" {
       }
     }
   }
+}
+
+resource "aws_cloudfront_function" "add_cache_control_header" {
+  name    = "add-cache-control-header"
+  runtime = "cloudfront-js-1.0"
+  comment = "Stops client side caching of pages"
+  publish = true
+  code    = file("${path.module}/response_function.js")
 }
 
 output "burendo_handbook_cf_distro" {
