@@ -299,3 +299,16 @@ jobs:
         run: |
           set -e
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
+
+  report-failures:
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+          notification_title: '${{ github.workflow }} has ${{ job.status }}'
+          message_format: '@here *${{ github.workflow }}* ${{ job.status }} in ${{ github.repository }} triggered by ${{ github.triggering_actor }}'
+          footer: 'Run id is ${{ github.run_id }}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_NOTIFICATIONS_WEBHOOK }}
