@@ -301,9 +301,13 @@ jobs:
           aws ssm terminate-session --session-id ${{ github.run_id }}-${{ github.run_number }}
 
   report-failures:
-      - name: Report Status
+    name: Report Status
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ravsamhq/notify-slack-action@v1
+
+      - name: "Report Failures"
         if: always()
-        uses: ravsamhq/notify-slack-action@v1
         with:
           status: ${{ job.status }}
           notify_when: 'failure'
