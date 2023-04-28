@@ -32,16 +32,29 @@ lambda-zip: ## Make zip file for lambda
 	./build_verify_lambda.sh && \
 	cd ../../
 	
-.PHONY: handbook-local-public
-handbook-local: ## Run handbook locally
-	@cd burendo-handbook && \
-	mv docusaurus.config.public.js docusaurus.config.js
-	npm install && \
-	npm run-script docusaurus start
+.PHONY: handbook-local
+handbook-local: ## Run handbook with public content locally
+	@if [[ -f "burendo-handbook/docusaurus.config.public.js" ]]; then \
+		cd burendo-handbook && \
+		mv docusaurus.config.public.js docusaurus.config.js && \
+		npm install && \
+		npm run-script docusaurus start; \
+	else \
+		cd burendo-handbook && \
+		npm install && \
+		npm run-script docusaurus start; \
+	fi
+	
 	
 .PHONY: handbook-local-private
-handbook-local: ## Run handbook locally
-	@cd burendo-handbook && \
-	mv docusaurus.config.private.js docusaurus.config.js
-	npm install && \
-	npm run-script docusaurus start
+handbook-local-private: ## Run handbook with private content locally
+	@if [[ -f "docusaurus.config.private.js" ]]; then \
+		cd burendo-handbook \
+		mv docusaurus.config.private.js docusaurus.config.js; \
+		npm install && \
+		npm run-script docusaurus start \
+	else \
+		cd burendo-handbook \
+		npm install && \
+		npm run-script docusaurus start \
+	fi

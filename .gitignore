@@ -40,3 +40,4 @@ burendo-handbook-public/*
 **/lambda.zip
 **/__pycache__
 **/*.zip
+package-lock.json
