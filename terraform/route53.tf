@@ -45,3 +45,13 @@ resource "aws_route53_record" "burendo_handbook" {
     evaluate_target_health = false
   }
 }
+
+resource "aws_route53_health_check" "burendo_handbook_health_check" {
+  failure_threshold = "5"
+  fqdn              = "handbook.burendo.com"
+  port              = 443
+  request_interval  = "30"
+  resource_path     = "/"
+  search_string     = "The Burendo Handbook"
+  type              = "HTTPS_STR_MATCH"
+}
