@@ -1,10 +1,9 @@
 resource "awscc_chatbot_slack_channel_configuration" "burendo_handbook_health_check_alarm_to_slack" {
-  provider           = awscc
   configuration_name = "burendo-handbook-health-check-alarm-to-slack"
   iam_role_arn       = aws_iam_role.chatbot_burendo_handbook_to_slack.arn
   slack_channel_id   = local.burendo_slack_practice_engineering_notifications_channel_id
   slack_workspace_id = local.burendo_slack_workspace_id
-  sns_topic_arns     = [aws_sns_topic.burendo_handbook_health_check_alarm_topic.arn]
+  sns_topic_arns     = [aws_sns_topic.burendo_handbook_health_check_topic.arn]
   logging_level      = "INFO"
 }
 
