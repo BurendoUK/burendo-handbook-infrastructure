@@ -9,7 +9,7 @@ resource "awscc_chatbot_slack_channel_configuration" "burendo_handbook_health_ch
 }
 
 resource "aws_iam_role" "chatbot_burendo_handbook_to_slack" {
-  provider           = awscc
+  provider           = aws.northvirginia
   name               = "AWSChatbotRoleBurendoHandbookToSlack"
   assume_role_policy = data.aws_iam_policy_document.chatbot_burendo_handbook_to_slack_assume_role.json
 }
@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "chatbot_burendo_handbook_to_slack_assume_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "chatbot_burendo_handbook_to_slack_read_only_access" {
-  provider   = awscc
+  provider   = aws.northvirginia
   role       = aws_iam_role.chatbot_burendo_handbook_to_slack.name
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
 }
