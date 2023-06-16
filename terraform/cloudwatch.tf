@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_metric_alarm" "burendo_handbook_health_check_alarm" {
-  provider                  = aws
+  provider                  = aws.northvirginia
   alarm_name                = "${local.environment}-burendo-handbook-health-check-alarm"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = "1"

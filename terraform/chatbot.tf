@@ -1,4 +1,5 @@
 resource "awscc_chatbot_slack_channel_configuration" "burendo_handbook_health_check_alarm_to_slack" {
+  provider           = awscc
   configuration_name = "burendo-handbook-health-check-alarm-to-slack"
   iam_role_arn       = aws_iam_role.chatbot_burendo_handbook_to_slack.arn
   slack_channel_id   = local.burendo_slack_practice_engineering_notifications_channel_id
@@ -8,6 +9,7 @@ resource "awscc_chatbot_slack_channel_configuration" "burendo_handbook_health_ch
 }
 
 resource "aws_iam_role" "chatbot_burendo_handbook_to_slack" {
+  provider           = awscc
   name               = "AWSChatbotRoleBurendoHandbookToSlack"
   assume_role_policy = data.aws_iam_policy_document.chatbot_burendo_handbook_to_slack_assume_role.json
 }
@@ -23,6 +25,7 @@ data "aws_iam_policy_document" "chatbot_burendo_handbook_to_slack_assume_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "chatbot_burendo_handbook_to_slack_read_only_access" {
+  provider   = awscc
   role       = aws_iam_role.chatbot_burendo_handbook_to_slack.name
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
 }
