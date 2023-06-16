@@ -47,6 +47,7 @@ resource "aws_route53_record" "burendo_handbook" {
 }
 
 resource "aws_route53_health_check" "burendo_handbook_health_check" {
+  provider          = aws.northvirginia
   failure_threshold = "5"
   fqdn              = "handbook.burendo.com"
   port              = 443
