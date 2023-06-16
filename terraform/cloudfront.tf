@@ -22,10 +22,10 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
   aliases = local.deploy_fqdn[local.environment] == true ? [local.environment_domain[local.environment]] : []
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = local.s3_origin_id
-    cache_policy_id  = aws_cloudfront_cache_policy.handbook_distribution_cache_policy.id
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id       = local.s3_origin_id
+    cache_policy_id        = aws_cloudfront_cache_policy.handbook_distribution_cache_policy.id
     viewer_protocol_policy = "redirect-to-https"
 
     lambda_function_association {
