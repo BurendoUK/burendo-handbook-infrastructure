@@ -72,6 +72,6 @@ locals {
     }
   ]
 
-  burendo_slack_practice_engineering_notifications_channel_id = "C042P3F7Y48"
-  burendo_slack_workspace_id = "T8U95MFB3"
+  burendo_slack_practice_engineering_notifications_channel_id = {{github.slack_workspace_id}}
+  burendo_slack_workspace_id = {{github.slack_channel_id_practice_engineering_notifications}}
 }
