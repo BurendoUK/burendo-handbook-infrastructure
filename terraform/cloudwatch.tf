@@ -9,6 +9,7 @@ resource "aws_cloudwatch_metric_alarm" "burendo_handbook_health_check_alarm" {
   statistic                 = "Minimum"
   threshold                 = "1"
   insufficient_data_actions = []
+  ok_actions                = [aws_sns_topic.burendo_handbook_health_check_topic.arn]
   alarm_actions             = [aws_sns_topic.burendo_handbook_health_check_topic.arn]
   alarm_description         = "Send an alarm if burendo handbook is down in ${local.environment}"
 
