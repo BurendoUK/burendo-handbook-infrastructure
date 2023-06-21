@@ -9,8 +9,8 @@ resource "aws_cloudwatch_metric_alarm" "burendo_handbook_health_check_alarm" {
   statistic                 = "Minimum"
   threshold                 = "1"
   insufficient_data_actions = []
-  ok_actions                = [data.terraform_remote_state.burendo_common_config.sns_topic_alerts_to_slack.arn]
-  alarm_actions             = [data.terraform_remote_state.burendo_common_config.sns_topic_alerts_to_slack.arn]
+  ok_actions                = [data.terraform_remote_state.burendo_common_config.outputs.sns_topic_alerts_to_slack.arn]
+  alarm_actions             = [data.terraform_remote_state.burendo_common_config.outputs.sns_topic_alerts_to_slack.arn]
   alarm_description         = "Send an alarm if burendo handbook is down in ${local.environment}"
 
   dimensions = {
