@@ -31,7 +31,7 @@ provider "aws" {
 
 data "terraform_remote_state" "burendo_common_config" {
   backend   = "s3"
-  workspace = terraform.workspace
+  workspace = "default"
 
   config = {
     bucket         = "{{terraform.state_file_bucket}}"
@@ -42,4 +42,8 @@ data "terraform_remote_state" "burendo_common_config" {
     kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.aws_production_acc}}:key/{{terraform.state_kms_key_id}}"
     role_arn       = "arn:aws:iam::{{terraform.aws_production_acc}}:role/{{terraform.state_role}}"
   }
+}
+
+output "remote_state" {
+  value = data.terraform_remote_state.burendo_common_config.outputs.sns_topic_alerts_to_slack
 }
