@@ -85,34 +85,8 @@ jobs:
         working-directory: .
         continue-on-error: false
 
-      - name: "Rename Public Configuration"
-        id: rename-public-config
-        run: mv docusaurus.config.public.js docusaurus.config.js
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
       - name: "Build handbook with content"
         id: build-public-handbook
-        run: |
-          npm install
-          npm run build
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Reset Configuration"
-        id: reset-config
-        run: mv docusaurus.config.js docusaurus.config.public.js
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Rename Private Configuration"
-        id: rename-private-config
-        run: mv docusaurus.config.private.js docusaurus.config.js
-        working-directory: ./burendo-handbook
-        continue-on-error: false
-
-      - name: "Build handbook with content"
-        id: build-private-handbook
         run: |
           npm install
           npm run build
