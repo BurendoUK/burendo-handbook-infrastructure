@@ -19,12 +19,8 @@
 **/terraform.tf
 **/locals.tf
 **/variables.tf
-burendo-handbook/docusaurus.config.js
-
 **/burendo-handbook/docs/*
 **/burendo-handbook-public/*
-**/burendo-handbook-private/*
-burendo-handbook-private/*
 burendo-handbook-public/*
 
 # node

@@ -44,7 +44,7 @@ const config = {
       ({
         docs: {
           routeBasePath: "/",
-          sidebarPath: require.resolve("./sidebars.private.js"),
+          sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl:
@@ -84,12 +84,6 @@ const config = {
           src: "img/burendo_logo.png",
         },
         items: [
-          {
-            href: "https://handbook.burendo.com/?logout=true",
-            label: 'Logout',
-            position: 'right',
-            target: "_self",
-          },
           {
             to: 'blog', 
             label: 'Blog', 

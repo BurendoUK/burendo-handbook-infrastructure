@@ -33,7 +33,7 @@ export default function NotFound() {
                 <Translate
                   id="theme.NotFound.p2"
                   description="The 2nd paragraph of the 404 page">
-                  You may need to be logged in to view this content which you can do via the login button top right.
+                  The page may no longer exist, please try browsing the menu from the home page or our search functionality.
                 </Translate>
               </p>
             </div>
