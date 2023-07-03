@@ -16,8 +16,9 @@ Each set of content is saved to a separate S3 bucket so that the private content
 
 ### Running locally
 
-Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs.
-Then `make handbook-local-public` to use the public content and sidebars or `make-handbook-private` to run with private and public content and sidebars. Running these creates local build files and a local `sidebars.js` file that is git ignored.
+Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs. To do this, check out the public, private or both content repos (see [the Content section for the links](#content)), then copy the `docs` folder to the local checked out infra repo within the `burendo-handbook` folder (the `docs` folder is git ignored from this folder). To test public and private content, copy public content first, then private in to the same folder.
+
+Then `make handbook-local` to use the public content and sidebars or `make handbook-local-private` to run with private and public content and sidebars. Running these creates local build files and a local `docusaurus.config.js` file that is git ignored.
 
 ## Configuration files
 
@@ -41,7 +42,7 @@ When any request comes in for a page, the lambda checks if the cookie is present
 
 You can tell if you are logged in or out by the "Login" or "Logout" menu option.
 
-### Running "locally (AWS)"
+### Running lambda locally (AWS)
 
 This is an arm64 lambda and the below dependencies are compiled for arm64. Cryptography is compiled for arm64 using the following steps:
 1. For VSCode use the `.devcontainer` in the root of the repo to build the lambda: `Shift + CMD + P` and _Choose Reopen in container_

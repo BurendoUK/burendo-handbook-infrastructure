@@ -41,3 +41,7 @@ burendo-handbook-public/*
 **/__pycache__
 **/*.zip
 package-lock.json
+
+# local testing
+
+burendo-handbook/docs

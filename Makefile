@@ -9,7 +9,7 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: bootstrap
-bootstrap: ## Bootstrap local environment for first use
+bootstrap: ## Bootstrap local environment for first uses
 	@make git-hooks
 	make bootstrap-terraform
 
@@ -45,16 +45,15 @@ handbook-local: ## Run handbook with public content locally
 		npm run-script docusaurus start; \
 	fi
 	
-	
 .PHONY: handbook-local-private
 handbook-local-private: ## Run handbook with private content locally
-	@if [[ -f "docusaurus.config.private.js" ]]; then \
-		cd burendo-handbook \
-		mv docusaurus.config.private.js docusaurus.config.js; \
+	@if [[ -f "burendo-handbook/docusaurus.config.private.js" ]]; then \
+		cd burendo-handbook && \
+		mv docusaurus.config.private.js docusaurus.config.js && \
 		npm install && \
-		npm run-script docusaurus start \
+		npm run-script docusaurus start; \
 	else \
-		cd burendo-handbook \
+		cd burendo-handbook && \
 		npm install && \
-		npm run-script docusaurus start \
+		npm run-script docusaurus start; \
 	fi
