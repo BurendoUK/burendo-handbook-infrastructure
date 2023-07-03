@@ -36,7 +36,7 @@ lambda-zip: ## Make zip file for lambda
 handbook-local: ## Run handbook with public content locally
 	@if [[ -f "burendo-handbook/docusaurus.config.public.js" ]]; then \
 		cd burendo-handbook && \
-		mv docusaurus.config.public.js docusaurus.config.js && \
+		cp docusaurus.config.public.js docusaurus.config.js && \
 		npm install && \
 		npm run-script docusaurus start; \
 	else \
@@ -49,7 +49,7 @@ handbook-local: ## Run handbook with public content locally
 handbook-local-private: ## Run handbook with private content locally
 	@if [[ -f "burendo-handbook/docusaurus.config.private.js" ]]; then \
 		cd burendo-handbook && \
-		mv docusaurus.config.private.js docusaurus.config.js && \
+		cp docusaurus.config.private.js docusaurus.config.js && \
 		npm install && \
 		npm run-script docusaurus start; \
 	else \
