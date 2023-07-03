@@ -18,6 +18,8 @@ Each set of content is saved to a separate S3 bucket so that the private content
 
 Running locally, you will need to bring in the docs from content repos into burendo-handbook/docs. To do this, check out the public, private or both content repos (see [the Content section for the links](#content)), then copy the `docs` folder to the local checked out infra repo within the `burendo-handbook` folder (the `docs` folder is git ignored from this folder). To test public and private content, copy public content first, then private in to the same folder.
 
+This repository, as with almost all our others, uses a `Makefile` to simplify and standardise on-boarding and use of the repos content.  Run `make` to get a list of commands and their functions.
+
 Then `make handbook-local` to use the public content and sidebars or `make handbook-local-private` to run with private and public content and sidebars. Running these creates local build files and a local `docusaurus.config.js` file that is git ignored.
 
 ## Configuration files
