@@ -21,6 +21,8 @@
 **/variables.tf
 **/burendo-handbook/docs/*
 **/burendo-handbook-public/*
+**/burendo-handbook-private/*
+burendo-handbook-private/*
 burendo-handbook-public/*
 
 # node
