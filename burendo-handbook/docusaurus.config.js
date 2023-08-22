@@ -55,6 +55,12 @@ const config = {
           blogDescription: 'Thoughts from our Burendoers',
           postsPerPage: 'ALL',
           showReadingTime: true,
+          feedOptions: {
+            type: 'all',
+            title: 'Burendo blog',
+            description: 'Blogs from our Burendoers',
+            copyright: '2023 @ Burendo Ltd',
+          }
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
