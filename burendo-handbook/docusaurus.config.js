@@ -3,8 +3,8 @@
 
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-require('dotenv').config();
-console.log(process.env)
+require("dotenv").config();
+console.log(process.env);
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -21,7 +21,7 @@ const config = {
       {
         indexBlog: false,
       },
-    ],
+    ]
   ],
 
   // GitHub pages deployment config.
@@ -51,22 +51,22 @@ const config = {
           //   "https://github.com/BurendoUK/burendo-handbook-public/blob/main/",
         },
         blog: {
-          blogTitle: 'Burendo blog!',
-          blogDescription: 'Thoughts from our Burendoers',
-          postsPerPage: 'ALL',
+          blogTitle: "Burendo blog!",
+          blogDescription: "Thoughts from our Burendoers",
+          postsPerPage: "ALL",
           showReadingTime: true,
           feedOptions: {
-            type: 'all',
-            title: 'Burendo blog',
-            description: 'Blogs from our Burendoers',
-            copyright: '2023 @ Burendo Ltd',
-          }
+            type: "all",
+            title: "Burendo blog",
+            description: "Blogs from our Burendoers",
+            copyright: "2023 @ Burendo Ltd",
+          },
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
         gtag: {
-          trackingID: 'G-6SG9CBCS3W',
+          trackingID: "G-6SG9CBCS3W",
           anonymizeIP: true,
         },
       }),
@@ -76,12 +76,12 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/burendo_logo_horizontal.png',
+      image: "img/burendo_logo_horizontal.png",
       colorMode: {
-        defaultMode: 'dark',
+        defaultMode: "dark",
         disableSwitch: false,
         respectPrefersColorScheme: false,
-        },
+      },
       navbar: {
         hideOnScroll: true,
         title: "The Burendo Handbook",
@@ -91,9 +91,9 @@ const config = {
         },
         items: [
           {
-            to: 'blog', 
-            label: 'Blog', 
-            position: 'right'
+            to: "blog",
+            label: "Blog",
+            position: "right",
           },
         ],
       },
@@ -138,6 +138,12 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
+
+  markdown: {
+    mermaid: true,
+  },
+
+  themes: ["@docusaurus/theme-mermaid"],
 };
 
 module.exports = config;
