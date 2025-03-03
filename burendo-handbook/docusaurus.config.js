@@ -1,8 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+const lightCodeTheme = require('prism-react-renderer').themes.github;
+const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 require("dotenv").config();
 console.log(process.env);
 
@@ -15,14 +15,6 @@ const config = {
   onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/burendo_logo.png",
-  plugins: [
-    [
-      require.resolve("@cmfcmf/docusaurus-search-local"),
-      {
-        indexBlog: false,
-      },
-    ]
-  ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
