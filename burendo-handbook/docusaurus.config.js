@@ -15,14 +15,6 @@ const config = {
   onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/burendo_logo.png",
-  // plugins: [
-  //   [
-  //     require.resolve("@cmfcmf/docusaurus-search-local"),
-  //     {
-  //       indexBlog: false,
-  //     },
-  //   ]
-  // ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
