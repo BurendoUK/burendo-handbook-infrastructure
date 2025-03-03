@@ -36,4 +36,4 @@ lambda-zip: ## Make zip file for lambda
 handbook-local: ## Run handbook with content locally
 	cd burendo-handbook && \
 	npm install && \
-	npm run-script docusaurus start;
+	npm run dev;
