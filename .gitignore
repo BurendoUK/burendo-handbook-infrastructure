@@ -20,6 +20,7 @@
 **/locals.tf
 **/variables.tf
 **/burendo-handbook/docs/*
+**/burendo-handbook/blog/*
 **/burendo-handbook-public/*
 **/burendo-handbook-private/*
 burendo-handbook-private/*
@@ -43,3 +44,4 @@ package-lock.json
 # local testing
 
 burendo-handbook/docs
+burendo-handbook/blog
