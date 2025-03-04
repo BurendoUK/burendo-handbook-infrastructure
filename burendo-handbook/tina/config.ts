@@ -54,8 +54,8 @@ export default defineConfig({
           },
           {
             type: "string",
-            name: "author",
-            label: "Author",
+            name: "authors",
+            label: "Authors",
             required: true,
           },
           {
