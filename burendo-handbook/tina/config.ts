@@ -91,16 +91,22 @@ export default defineConfig({
         path: "docs",
         fields: [
           {
+            type: "string",
+            name: "title",
+            label: "Title",
+            required: false,
+          },
+          {
+            type: "string",
+            name: "description",
+            label: "Description",
+            required: false,
+          },
+          {
             type: "number",
             name: "sidebar_position",
             label: "Sidebar Position",
             required: true,
-          },
-          {
-            type: "rich-text",
-            name: "body",
-            label: "Body",
-            isBody: true,
           },
           {
             type: "string",
@@ -119,6 +125,12 @@ export default defineConfig({
             name: "pagination_prev",
             label: "Previous Page",
             required: false,
+          },
+          {
+            type: "rich-text",
+            name: "body",
+            label: "Body",
+            isBody: true,
           },
         ],
       },
