@@ -41,6 +41,43 @@ export default defineConfig({
             required: true,
           },
           {
+            type: "string",
+            name: "description",
+            label: "Description",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "date",
+            label: "Date",
+            required: false,
+          },
+          {
+            type: "string",
+            name: "author",
+            label: "Author",
+            required: true,
+          },
+          {
+            type: "image",
+            name: "cover_image",
+            label: "Cover Image",
+            required: false,
+          },
+          {
+            type: "string",
+            name: "slug",
+            label: "Slug",
+            required: false,
+          },
+          {
+            type: "string",
+            name: "tags",
+            label: "Tags",
+            list: true,
+            required: false,
+          },
+          {
             type: "rich-text",
             name: "body",
             label: "Body",
@@ -54,10 +91,9 @@ export default defineConfig({
         path: "docs",
         fields: [
           {
-            type: "string",
-            name: "title",
-            label: "Title",
-            isTitle: true,
+            type: "number",
+            name: "sidebar_position",
+            label: "Sidebar Position",
             required: true,
           },
           {
@@ -65,6 +101,24 @@ export default defineConfig({
             name: "body",
             label: "Body",
             isBody: true,
+          },
+          {
+            type: "string",
+            name: "slug",
+            label: "Slug",
+            required: false,
+          },
+          {
+            type: "string",
+            name: "pagination_next",
+            label: "Next Page",
+            required: false,
+          },
+          {
+            type: "string",
+            name: "pagination_prev",
+            label: "Previous Page",
+            required: false,
           },
         ],
       },
