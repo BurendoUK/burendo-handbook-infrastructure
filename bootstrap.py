@@ -45,6 +45,8 @@ def main():
         github_secret['SecretBinary'])["google"]
     config_data['aws'] = json.loads(
         github_secret['SecretBinary'])["aws"]
+    config_data['mongodb'] = json.loads(
+        github_secret['SecretBinary'])["mongodb"]
 
     with open("terraform/terraform.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
