@@ -34,6 +34,24 @@ lambda-zip: ## Make zip file for lambda
 	
 .PHONY: handbook-local
 handbook-local: ## Run handbook with content locally
+	make kill-handbook-local && \
+	make kill-tina-local && \
 	cd burendo-handbook && \
-	npm install && \
+	npm install --legacy-peer-deps && \
 	npm run dev;
+	
+.PHONY: handbook-prod
+handbook-prod: ## Run handbook with content from prod
+	make kill-handbook-local && \
+	make kill-tina-local && \
+	cd burendo-handbook && \
+	npm install --legacy-peer-deps && \
+	npm run prod;
+	
+.PHONY: kill-handbook-local
+kill-handbook-local: ## Stop local handbook server
+	lsof -i TCP:3000 | grep LISTEN | awk '{print $$2}' | xargs kill -9
+	
+.PHONY: kill-tina-local
+kill-tina-local: ## Stop local tina server
+	lsof -i TCP:9000 | grep LISTEN | awk '{print $$2}' | xargs kill -9

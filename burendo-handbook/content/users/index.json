@@ -1,0 +1,13 @@
+{
+    "users": [
+      {
+        "name": "Tina User",
+        "email": "engineering@burendo.com",
+        "username": "admin",
+        "password": {
+          "value": "admin",
+          "passwordChangeRequired": true
+        }
+      }
+    ]
+  }
