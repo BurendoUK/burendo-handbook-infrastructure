@@ -20,6 +20,7 @@
 **/terraform.tf
 **/locals.tf
 **/variables.tf
+**/burendo-handbook/.next/*
 **/burendo-handbook/docs/*
 **/burendo-handbook/blog/*
 **/burendo-handbook-public/*
