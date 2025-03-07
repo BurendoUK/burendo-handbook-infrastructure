@@ -37,16 +37,16 @@ handbook-local: ## Run handbook with content locally
 	make kill-handbook-local && \
 	make kill-tina-local && \
 	cd burendo-handbook && \
-	npm install --legacy-peer-deps && \
-	npm run dev;
+	npm install --legacy-peer-deps -g && \
+	concurrently "npm run start" "npm run tina-dev";
 	
 .PHONY: handbook-prod
 handbook-prod: ## Run handbook with content from prod
 	make kill-handbook-local && \
 	make kill-tina-local && \
 	cd burendo-handbook && \
-	npm install --legacy-peer-deps && \
-	npm run prod;
+	npm install --legacy-peer-deps -g && \
+	concurrently "npm run start" "npm run tina-prod";
 	
 .PHONY: kill-handbook-local
 kill-handbook-local: ## Stop local handbook server
