@@ -40,6 +40,21 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     }
   }
 
+  ordered_cache_behavior {
+    allowed_methods        = ["GET", "POST", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    path_pattern           = "/api/*"
+    target_origin_id       = aws_lb.burendo_handbook_internal_alb.arn
+    viewer_protocol_policy = "redirect-to-https"
+
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "all"
+      }
+    }
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
