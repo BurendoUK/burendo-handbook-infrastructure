@@ -13,8 +13,14 @@ resource "aws_elastic_beanstalk_application_version" "burendo_handbook_api_versi
 resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
   name                = "burendo-handbook-api-env"
   application         = aws_elastic_beanstalk_application.burendo_handbook_api.name
-  solution_stack_name = "64bit Amazon Linux 2 running Node.js 18"
+  solution_stack_name = "64bit Amazon Linux 2 v5.9.12 running Node.js 18"
   cname_prefix        = "burendo-handbook-api"
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
+    value     = aws_security_group.handbook_instance_sg.id
+  }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
@@ -47,9 +53,9 @@ resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
   }
 
   setting {
-    namespace = "aws:elasticbeanstalk:container:nodejs"
-    name      = "NodeCommand"
-    value     = "npm run start"
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "TINA_PUBLIC_IS_LOCAL"
+    value     = "false"
   }
 
   depends_on = [
