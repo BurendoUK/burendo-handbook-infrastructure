@@ -49,6 +49,6 @@ resource "aws_security_group" "handbook_instance_sg" {
 }
 
 data "aws_ip_ranges" "cloudfront" {
-  regions  = ["global"]
+  regions  = ["eu-west-2", "us-east-1"]
   services = ["cloudfront"]
 }
