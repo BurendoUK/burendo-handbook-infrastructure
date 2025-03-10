@@ -178,8 +178,7 @@ const docsCollection = {
     ],
 };
 export default defineConfig({
-    contentApiUrlOverride: "https://E3CLX6GBCA21YG.cloudfront.net/api/tina/gql",
-    ...(isLocal ? {} : { contentApiUrlOverride: "/api/tina/gql" }),
+    ...(isLocal ? {} : { contentApiUrlOverride: "https://E3CLX6GBCA21YG.cloudfront.net/api/tina/gql" }),
     branch,
     clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
     token: process.env.TINA_TOKEN,
