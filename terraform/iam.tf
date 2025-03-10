@@ -76,3 +76,13 @@ resource "aws_iam_instance_profile" "eb_instance_profile" {
   name = "eb-instance-profile"
   role = aws_iam_role.eb_instance_role.name
 }
+
+resource "aws_iam_role_policy_attachment" "eb_instance_s3_policy" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "eb_instance_cloudwatch_policy" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
