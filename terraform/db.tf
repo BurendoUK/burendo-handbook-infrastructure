@@ -16,7 +16,7 @@ resource "mongodbatlas_database_user" "handbook-user" {
   auth_database_name = "admin"
 
   roles {
-    role_name     = "readAnyDatabase"
+    role_name     = "readWriteAnyDatabase"
     database_name = "admin"
   }
 
