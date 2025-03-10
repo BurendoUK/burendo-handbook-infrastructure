@@ -7,7 +7,7 @@ resource "aws_security_group" "handbook_alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"] # Allow only internal VPC traffic
+    cidr_blocks = data.aws_ip_ranges.cloudfront.cidr_blocks
   }
 
   # Allow ALB to communicate with EC2 instances
@@ -46,4 +46,9 @@ resource "aws_security_group" "handbook_instance_sg" {
   tags = {
     Name = "burendo-handbook-instance-sg"
   }
+}
+
+data "aws_ip_ranges" "cloudfront" {
+  regions  = ["global"]
+  services = ["cloudfront"]
 }
