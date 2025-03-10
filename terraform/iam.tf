@@ -60,3 +60,19 @@ data "aws_iam_policy_document" "cloudwatch_for_lambda" {
     ]
   }
 }
+
+resource "aws_iam_role" "eb_instance_role" {
+  name = "eb-instance-role"
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_instance_profile" "eb_instance_profile" {
+  name = "eb-instance-profile"
+  role = aws_iam_role.eb_instance_role.name
+}
