@@ -178,7 +178,7 @@ const docsCollection = {
     ],
 };
 export default defineConfig({
-    contentApiUrlOverride: "http://burendo-handbook-api.elasticbeanstalk.com/api/tina/gql",
+    contentApiUrlOverride: "https://E3CLX6GBCA21YG.cloudfront.net/api/tina/gql",
     ...(isLocal ? {} : { contentApiUrlOverride: "/api/tina/gql" }),
     branch,
     clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
