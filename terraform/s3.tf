@@ -75,3 +75,42 @@ resource "aws_s3_bucket_public_access_block" "burendo_handbook_private_block" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+resource "aws_s3_bucket" "burendo_handbook_api" {
+  bucket = "handbook-api.${local.environment_domain[local.environment]}"
+
+  tags = merge(local.tags, {
+    Name = "burendo-handbook-api"
+  })
+}
+
+data "aws_iam_policy_document" "s3_policy_api" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.burendo_handbook_api.arn}/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = ["${aws_elastic_beanstalk_application.burendo_handbook_api.arn}"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "burendo_handbook_api" {
+  bucket = aws_s3_bucket.burendo_handbook_api.id
+  policy = data.aws_iam_policy_document.s3_policy_api.json
+}
+
+resource "aws_s3_bucket_public_access_block" "burendo_handbook_api_block" {
+  bucket = aws_s3_bucket.burendo_handbook_api.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
