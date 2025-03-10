@@ -4,6 +4,7 @@ resource "aws_lb" "burendo_handbook_internal_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.handbook_alb_sg.id]
   subnets            = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+  depends_on         = [aws_internet_gateway.burendo_handbook_igw]
 }
 
 resource "aws_lb_target_group" "burendo_handbook_tg" {
