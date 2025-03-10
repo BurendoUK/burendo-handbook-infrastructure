@@ -44,7 +44,7 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     allowed_methods        = ["GET", "POST", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
     path_pattern           = "/api/*"
-    target_origin_id       = aws_lb.burendo_handbook_internal_alb.arn
+    target_origin_id       = aws_lb.burendo_handbook_internal_alb.id
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
