@@ -18,23 +18,23 @@ resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
   version_label          = aws_elastic_beanstalk_application_version.burendo_handbook_api_version.name
   wait_for_ready_timeout = "10m"
 
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
-    name      = "SecurityGroups"
-    value     = aws_security_group.handbook_instance_sg.id
-  }
+  # setting {
+  #   namespace = "aws:autoscaling:launchconfiguration"
+  #   name      = "SecurityGroups"
+  #   value     = aws_security_group.handbook_instance_sg.id
+  # }
 
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "VPCId"
-    value     = aws_vpc.burendo_handbook_vpc.id
-  }
+  # setting {
+  #   namespace = "aws:ec2:vpc"
+  #   name      = "VPCId"
+  #   value     = aws_vpc.burendo_handbook_vpc.id
+  # }
 
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "Subnets"
-    value     = "${aws_subnet.private_subnet_1.id},${aws_subnet.private_subnet_2.id}"
-  }
+  # setting {
+  #   namespace = "aws:ec2:vpc"
+  #   name      = "Subnets"
+  #   value     = "${aws_subnet.private_subnet_1.id},${aws_subnet.private_subnet_2.id}"
+  # }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
