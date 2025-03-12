@@ -73,6 +73,9 @@ resource "aws_vpc_endpoint" "handbook_logs_endpoint" {
 }
 
 resource "aws_eip" "burendo_handbook_nat_eip" {
+  tags = {
+    Name = "Burendo Handbook NAT EIP"
+  }
 }
 
 resource "aws_nat_gateway" "burendo_handbook_nat" {
