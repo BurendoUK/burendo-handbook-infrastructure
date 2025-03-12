@@ -11,51 +11,31 @@ resource "aws_elastic_beanstalk_application_version" "burendo_handbook_api_versi
 }
 
 resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
-  name                = "burendo-handbook-api-env"
-  application         = aws_elastic_beanstalk_application.burendo_handbook_api.name
-  solution_stack_name = "64bit Amazon Linux 2023 v6.4.3 running Node.js 22"
-  cname_prefix        = "burendo-handbook-api"
+  name                   = "burendo-handbook-api-env"
+  application            = aws_elastic_beanstalk_application.burendo_handbook_api.name
+  solution_stack_name    = "64bit Amazon Linux 2023 v6.4.3 running Node.js 22"
+  cname_prefix           = "burendo-handbook-api"
+  version_label          = aws_elastic_beanstalk_application_version.burendo_handbook_api_version.name
+  endpoint_url           = aws_lb.burendo_handbook_internal_alb.dns_name
+  wait_for_ready_timeout = "10m"
 
-  # setting {
-  #   namespace = "aws:autoscaling:launchconfiguration"
-  #   name      = "SecurityGroups"
-  #   value     = aws_security_group.handbook_instance_sg.id
-  # }
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
+    value     = aws_security_group.handbook_instance_sg.id
+  }
 
-  # setting {
-  #   namespace = "aws:ec2:vpc"
-  #   name      = "VPCId"
-  #   value     = aws_vpc.burendo_handbook_vpc.id
-  # }
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "VPCId"
+    value     = aws_vpc.burendo_handbook_vpc.id
+  }
 
-  # setting {
-  #   namespace = "aws:ec2:vpc"
-  #   name      = "Subnets"
-  #   value     = "${aws_subnet.private_subnet_1.id},${aws_subnet.private_subnet_2.id}"
-  # }
-
-  # setting {
-  #   name      = "ListenerEnabled"
-  #   namespace = "aws:elb:listener"
-  #   value     = "true"
-  # }
-  # setting {
-  #   name      = "ListenerProtocol"
-  #   namespace = "aws:elb:listener"
-  #   value     = "HTTP"
-  # }
-
-  # setting {
-  #   namespace = "aws:elb:listener"
-  #   name      = "InstancePort"
-  #   value     = "3000"
-  # }
-
-  # setting {
-  #   namespace = "aws:elasticbeanstalk:application"
-  #   name      = "Application Healthcheck URL"
-  #   value     = "HTTP:3000"
-  # }
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "Subnets"
+    value     = "${aws_subnet.private_subnet_1.id},${aws_subnet.private_subnet_2.id}"
+  }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
