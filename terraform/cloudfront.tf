@@ -14,6 +14,17 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
       }
     }
   }
+  origin {
+    domain_name = aws_lb.burendo_handbook_internal_alb.dns_name
+    origin_id   = "burendo-handbook-internal-alb"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
 
   enabled             = true
   is_ipv6_enabled     = true
@@ -27,6 +38,7 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     target_origin_id       = local.s3_origin_id
     cache_policy_id        = aws_cloudfront_cache_policy.handbook_distribution_cache_policy.id
     viewer_protocol_policy = "redirect-to-https"
+
 
     lambda_function_association {
       event_type   = "origin-request"
@@ -46,6 +58,7 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     path_pattern           = "/api/*"
     target_origin_id       = aws_lb.burendo_handbook_internal_alb.id
     viewer_protocol_policy = "redirect-to-https"
+    cache_policy_id        = "4135d52b-8e89-4e4a-b34c-f2dfb39e24f4" # AWS Managed No-Cache Policy
 
     forwarded_values {
       query_string = true
@@ -107,6 +120,8 @@ resource "aws_cloudfront_cache_policy" "handbook_distribution_cache_policy" {
         items = [
           "host",
           "Host",
+          "Authorization", # Allow Authorization header
+          "Content-Type",  # Allow Content-Type header
         ]
       }
     }
