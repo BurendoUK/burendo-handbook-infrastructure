@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     custom_origin_config {
       http_port              = 80
       https_port             = 443
-      origin_protocol_policy = "https-only"
+      origin_protocol_policy = "match-viewer"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
@@ -53,19 +53,12 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
   }
 
   ordered_cache_behavior {
-    allowed_methods        = ["GET", "POST", "HEAD", "OPTIONS"]
+    allowed_methods        = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
     path_pattern           = "/api/*"
-    target_origin_id       = aws_lb.burendo_handbook_internal_alb.id
-    viewer_protocol_policy = "redirect-to-https"
-    cache_policy_id        = "4135d52b-8e89-4e4a-b34c-f2dfb39e24f4" # AWS Managed No-Cache Policy
-
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "all"
-      }
-    }
+    target_origin_id       = "burendo-handbook-internal-alb"
+    viewer_protocol_policy = "allow-all"
+    cache_policy_id        = "2e54312d-136d-493c-8eb9-b001f22f67d2" # AWS Managed No-Cache Policy
   }
 
   restrictions {
