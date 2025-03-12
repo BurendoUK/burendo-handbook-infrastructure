@@ -15,13 +15,13 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     }
   }
   origin {
-    domain_name = aws_lb.burendo_handbook_internal_alb.dns_name
-    origin_id   = "burendo-handbook-internal-alb"
+    domain_name = "burendo-handbook-api.eu-west-2.elasticbeanstalk.com"
+    origin_id   = "burendo-handbook-internal-api"
 
     custom_origin_config {
       http_port              = 80
       https_port             = 443
-      origin_protocol_policy = "match-viewer"
+      origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
@@ -53,13 +53,15 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
   }
 
   ordered_cache_behavior {
-    allowed_methods        = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
-    cached_methods         = ["GET", "HEAD", "OPTIONS"]
-    path_pattern           = "/api/*"
-    target_origin_id       = "burendo-handbook-internal-alb"
-    viewer_protocol_policy = "allow-all"
-    cache_policy_id        = "2e54312d-136d-493c-8eb9-b001f22f67d2" # AWS Managed No-Cache Policy
+    path_pattern             = "/api/*"
+    target_origin_id         = "burendo-handbook-internal-api"
+    viewer_protocol_policy   = "https-only"
+    allowed_methods          = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]
+    cached_methods           = ["GET", "HEAD", "OPTIONS"]
+    cache_policy_id          = "2e54312d-136d-493c-8eb9-b001f22f67d2" # AWS Managed No-Cache Policy
+    origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3" # AWS Managed: AllViewerExceptHostHeader
   }
+
 
   restrictions {
     geo_restriction {
