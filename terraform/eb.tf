@@ -13,7 +13,7 @@ resource "aws_elastic_beanstalk_application_version" "burendo_handbook_api_versi
 resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
   name                = "burendo-handbook-api-env"
   application         = aws_elastic_beanstalk_application.burendo_handbook_api.name
-  solution_stack_name = "64bit Amazon Linux 2 v5.9.12 running Node.js 18"
+  solution_stack_name = "64bit Amazon Linux 2023 v6.4.3 running Node.js 22"
   cname_prefix        = "burendo-handbook-api"
 
   # setting {
