@@ -16,40 +16,69 @@ resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
   solution_stack_name = "64bit Amazon Linux 2 v5.9.12 running Node.js 18"
   cname_prefix        = "burendo-handbook-api"
 
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
-    name      = "SecurityGroups"
-    value     = aws_security_group.handbook_instance_sg.id
-  }
+  # setting {
+  #   namespace = "aws:autoscaling:launchconfiguration"
+  #   name      = "SecurityGroups"
+  #   value     = aws_security_group.handbook_instance_sg.id
+  # }
+
+  # setting {
+  #   namespace = "aws:ec2:vpc"
+  #   name      = "VPCId"
+  #   value     = aws_vpc.burendo_handbook_vpc.id
+  # }
+
+  # setting {
+  #   namespace = "aws:ec2:vpc"
+  #   name      = "Subnets"
+  #   value     = "${aws_subnet.private_subnet_1.id},${aws_subnet.private_subnet_2.id}"
+  # }
+
+  # setting {
+  #   name      = "ListenerEnabled"
+  #   namespace = "aws:elb:listener"
+  #   value     = "true"
+  # }
+  # setting {
+  #   name      = "ListenerProtocol"
+  #   namespace = "aws:elb:listener"
+  #   value     = "HTTP"
+  # }
+
+  # setting {
+  #   namespace = "aws:elb:listener"
+  #   name      = "InstancePort"
+  #   value     = "3000"
+  # }
+
+  # setting {
+  #   namespace = "aws:elasticbeanstalk:application"
+  #   name      = "Application Healthcheck URL"
+  #   value     = "HTTP:3000"
+  # }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
-    name      = "SecurityGroups"
-    value     = aws_security_group.handbook_alb_sg.id
-  }
-
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "VPCId"
-    value     = aws_vpc.burendo_handbook_vpc.id
-  }
-
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "Subnets"
-    value     = "${aws_subnet.private_subnet_1.id},${aws_subnet.private_subnet_2.id}"
+    name      = "InstanceType"
+    value     = "t3.medium" # Upgrade from t3.micro to t3.medium or larger
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "EnvironmentType"
-    value     = "LoadBalanced" # Use "SingleInstance" for one server
+    value     = "SingleInstance" # Use "SingleInstance" for one server
   }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.eb_instance_profile.name
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "SSM_AGENT_ENABLED"
+    value     = "true"
   }
 
   setting {
