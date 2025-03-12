@@ -2,7 +2,7 @@ resource "aws_security_group" "handbook_alb_sg" {
   name   = "burendo-handbook-alb-sg"
   vpc_id = aws_vpc.burendo_handbook_vpc.id
 
-  # Allow incoming HTTP requests from CloudFront / S3 (Private AWS Traffic)
+  # Allow incoming HTTP requests from CloudFront
   ingress {
     from_port   = 80
     to_port     = 80
@@ -10,12 +10,20 @@ resource "aws_security_group" "handbook_alb_sg" {
     cidr_blocks = data.aws_ip_ranges.cloudfront.cidr_blocks
   }
 
-  # Allow ALB to communicate with EC2 instances
+  # Allow incoming HTTPS requests from CloudFront
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = data.aws_ip_ranges.cloudfront.cidr_blocks
+  }
+
+  # Allow ALB to send traffic to backend EC2 instances (no direct SG reference)
   egress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
-    self      = true
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"] # Allow traffic within the VPC
   }
 
   tags = {
@@ -27,12 +35,12 @@ resource "aws_security_group" "handbook_instance_sg" {
   name   = "burendo-handbook-instance-sg"
   vpc_id = aws_vpc.burendo_handbook_vpc.id
 
-  # Allow only ALB traffic to reach instances
+  # Allow incoming traffic from ALB (no direct SG reference)
   ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.handbook_alb_sg.id]
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"] # Allow traffic from ALB inside the VPC
   }
 
   # Allow instances to access AWS services (S3, DynamoDB, etc.)
@@ -47,6 +55,31 @@ resource "aws_security_group" "handbook_instance_sg" {
     Name = "burendo-handbook-instance-sg"
   }
 }
+
+resource "aws_security_group" "handbook_ssm_vpc_endpoint_sg" {
+  name   = "handbook-ssm-vpc-endpoint-sg"
+  vpc_id = aws_vpc.burendo_handbook_vpc.id
+
+  # Allow EC2 instances to talk to SSM VPC Endpoints
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"] # Allow only internal VPC traffic
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "handbook-ssm-vpc-endpoint-sg"
+  }
+}
+
 
 data "aws_ip_ranges" "cloudfront" {
   regions  = ["eu-west-2", "us-east-1"]
