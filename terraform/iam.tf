@@ -86,3 +86,20 @@ resource "aws_iam_role_policy_attachment" "eb_instance_cloudwatch_policy" {
   role       = aws_iam_role.eb_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
+
+resource "aws_iam_role_policy_attachment" "eb_instance_ssm_policy" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+
+resource "aws_iam_role_policy_attachment" "eb_instance_beanstalk_policy" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier",
+    "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker",
+    "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
+  ])
+
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = each.value
+}
