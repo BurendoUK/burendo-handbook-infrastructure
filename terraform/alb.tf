@@ -9,14 +9,14 @@ resource "aws_lb" "burendo_handbook_internal_alb" {
 
 resource "aws_lb_target_group" "burendo_handbook_tg" {
   name     = "burendo-handbook-target-group"
-  port     = 80
+  port     = 3000 # Change from 80 to 3000
   protocol = "HTTP"
   vpc_id   = aws_vpc.burendo_handbook_vpc.id
 }
 
 resource "aws_lb_listener" "burendo_handbook_listener" {
   load_balancer_arn = aws_lb.burendo_handbook_internal_alb.arn
-  port              = 80
+  port              = 3000
   protocol          = "HTTP"
 
   default_action {
