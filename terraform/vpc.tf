@@ -41,6 +41,30 @@ resource "aws_vpc_endpoint" "handbook_ec2_endpoint" {
   subnet_ids        = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
 }
 
+resource "aws_vpc_endpoint" "handbook_ssm_endpoint" {
+  vpc_id             = aws_vpc.burendo_handbook_vpc.id
+  service_name       = "com.amazonaws.eu-west-2.ssm"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+  security_group_ids = [aws_security_group.handbook_ssm_vpc_endpoint_sg.id]
+}
+
+resource "aws_vpc_endpoint" "handbook_ssmmessages_endpoint" {
+  vpc_id             = aws_vpc.burendo_handbook_vpc.id
+  service_name       = "com.amazonaws.eu-west-2.ssmmessages"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+  security_group_ids = [aws_security_group.handbook_ssm_vpc_endpoint_sg.id]
+}
+
+resource "aws_vpc_endpoint" "handbook_ec2messages_endpoint" {
+  vpc_id             = aws_vpc.burendo_handbook_vpc.id
+  service_name       = "com.amazonaws.eu-west-2.ec2messages"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+  security_group_ids = [aws_security_group.handbook_ssm_vpc_endpoint_sg.id]
+}
+
 resource "aws_vpc_endpoint" "handbook_logs_endpoint" {
   vpc_id            = aws_vpc.burendo_handbook_vpc.id
   service_name      = "com.amazonaws.eu-west-2.logs"
