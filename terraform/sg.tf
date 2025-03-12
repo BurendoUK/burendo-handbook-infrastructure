@@ -37,8 +37,8 @@ resource "aws_security_group" "handbook_instance_sg" {
 
   # Allow incoming traffic from ALB (no direct SG reference)
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/16"] # Allow traffic from ALB inside the VPC
   }
