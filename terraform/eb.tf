@@ -16,7 +16,6 @@ resource "aws_elastic_beanstalk_environment" "burendo_handbook_api_env" {
   solution_stack_name    = "64bit Amazon Linux 2023 v6.4.3 running Node.js 22"
   cname_prefix           = "burendo-handbook-api"
   version_label          = aws_elastic_beanstalk_application_version.burendo_handbook_api_version.name
-  endpoint_url           = aws_lb.burendo_handbook_internal_alb.dns_name
   wait_for_ready_timeout = "10m"
 
   setting {
