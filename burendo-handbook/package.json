@@ -14,7 +14,9 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "tina-dev": "TINA_PUBLIC_IS_LOCAL=true tinacms dev -c \"next dev\"",
-    "tina-prod": "TINA_PUBLIC_IS_LOCAL=false tinacms dev -c \"next dev\""
+    "tina-prod": "TINA_PUBLIC_IS_LOCAL=false tinacms dev -c \"next dev\"",
+    "build:tina-free": "tinacms dev -c \"next build\" && docusaurus build",
+    "build:tina-prod": "TINA_PUBLIC_IS_LOCAL=false tinacms dev -c \"next build\" && docusaurus build"
   },
   "dependencies": {
     "@docusaurus/core": "3.7.0",
