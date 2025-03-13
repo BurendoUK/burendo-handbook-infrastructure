@@ -178,10 +178,8 @@ const docsCollection = {
     ],
 };
 export default defineConfig({
-    ...(isLocal ? {} : { contentApiUrlOverride: "https://E3CLX6GBCA21YG.cloudfront.net/api/tina/gql" }),
+    ...(isLocal ? {} : { contentApiUrlOverride: "/api/tina/gql" }),
     branch,
-    clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
-    token: process.env.TINA_TOKEN,
     authProvider: isLocal ? new LocalAuthProvider() : new UsernamePasswordAuthJSProvider(),
     build: {
         outputFolder: "admin",
