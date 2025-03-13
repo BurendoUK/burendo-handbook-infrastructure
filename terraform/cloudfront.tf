@@ -59,7 +59,7 @@ resource "aws_cloudfront_distribution" "handbook_distribution" {
     allowed_methods          = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]
     cached_methods           = ["GET", "HEAD", "OPTIONS"]
     cache_policy_id          = "2e54312d-136d-493c-8eb9-b001f22f67d2" # AWS Managed No-Cache Policy
-    origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3" # AWS Managed: AllViewerExceptHostHeader
+    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" # AWS Managed: AllViewer
   }
 
 
@@ -117,6 +117,7 @@ resource "aws_cloudfront_cache_policy" "handbook_distribution_cache_policy" {
           "Host",
           "Authorization", # Allow Authorization header
           "Content-Type",  # Allow Content-Type header
+          "XSRF-Token"
         ]
       }
     }
