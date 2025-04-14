@@ -12,6 +12,7 @@ const config = {
   tagline: "Together, it's possible",
   url: "https://handbook.burendo.com",
   baseUrl: "/",
+  staticDirectories: ['static', 'docs'],
   onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/burendo_logo.png",
