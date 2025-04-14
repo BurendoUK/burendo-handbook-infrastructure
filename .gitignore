@@ -43,3 +43,5 @@ package-lock.json
 # local testing
 
 burendo-handbook/docs
+burendo-handbook/blog
+burendo-handbook/static

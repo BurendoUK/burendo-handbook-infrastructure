@@ -172,6 +172,13 @@ jobs:
         working-directory: .
         continue-on-error: false
 
+      - name: "Move PUBLIC static content"
+        id: public-static-copy
+        run: |
+          mkdir -p burendo-handbook/static
+          mv burendo-handbook-public/static/* burendo-handbook/static
+        working-directory: .
+        continue-on-error: false
       - name: "Build handbook with content"
         id: build-handbook
         run: |
