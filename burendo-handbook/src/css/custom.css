@@ -114,3 +114,8 @@
     position: inherit;
   }
 }
+
+/* Class to be used to hide items */
+.hidden {
+  display: none !important;
+}
