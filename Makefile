@@ -34,6 +34,11 @@ lambda-zip: ## Make zip file for lambda
 	
 .PHONY: handbook-local
 handbook-local: ## Run handbook with content locally
+	make kill-handbook-local && \
 	cd burendo-handbook && \
 	npm install && \
 	npm run-script docusaurus start;
+	
+.PHONY: kill-handbook-local
+kill-handbook-local: ## Stop local handbook server
+	lsof -i TCP:3000 | grep LISTEN | awk '{print $$2}' | xargs kill -9
