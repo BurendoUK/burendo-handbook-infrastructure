@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
-const BASE_URL = 'http://localhost:3000/docs'; // or your live URL
+const BASE_URL = 'https://handbook.burendo.com'; // or your live URL
 
 function getAllMarkdownFiles(dir, prefix = '') {
   let results = [];
@@ -16,7 +16,7 @@ function getAllMarkdownFiles(dir, prefix = '') {
     if (stat && stat.isDirectory()) {
       results = results.concat(getAllMarkdownFiles(fullPath, relativePath));
     } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
-      const noExt = relativePath.replace(/\.mdx?$/, '').replace(/\\/g, '/');
+      const noExt = relativePath.replace(/\.mdx?$/, '').replace(/\\/g, '/').replace(/ /g, '%20').replace(/\d{2}-/g, '');
       results.push(`${BASE_URL}/${noExt}`);
     }
   });
