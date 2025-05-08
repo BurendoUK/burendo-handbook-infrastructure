@@ -45,3 +45,8 @@ package-lock.json
 burendo-handbook/docs
 burendo-handbook/blog
 burendo-handbook/static
+
+# PDF Generation
+
+burendo-handbook/urls.txt
+burendo-handbook/handbook.pdf

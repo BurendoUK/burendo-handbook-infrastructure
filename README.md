@@ -23,3 +23,7 @@ Then `make handbook-local` to run the Handbook locally.
 ## Configuration files
 
 Docusaurus has a menu file called `sidebars.js` and a configuration file `docusaurus.config.js`. These files should not be edited without clear knowledge of what you are changing and why.
+
+## PDF Generation
+
+If, for some reason you need to generate a PDF of the handbook, you can do so by running `make handbook-pdf`. This will generate a PDF in the `burendo-handbook` folder.

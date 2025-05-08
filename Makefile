@@ -42,3 +42,10 @@ handbook-local: ## Run handbook with content locally
 .PHONY: kill-handbook-local
 kill-handbook-local: ## Stop local handbook server
 	lsof -i TCP:3000 | grep LISTEN | awk '{print $$2}' | xargs kill -9
+
+.PHONY: handbook-pdf
+handbook-pdf: ## Make handbook pdf
+	@cd burendo-handbook && \
+	npm install puppeteer pdf-lib && \
+	node generate-urls.js && \
+	node generate-pdf.js
